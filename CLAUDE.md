@@ -50,11 +50,9 @@ This Next.js version differs from older training data: read `node_modules/next/d
 
 - Done: scaffolded app, landing page (`src/app/page.tsx`), title in `src/app/layout.tsx`. Lint and build pass.
   First commit `823f52f` on `main`. Git identity set for this repo only (name "kenno").
-- In progress: push to a new **private** GitHub repo `proofpay`. The builder is creating the empty repo on
-  github.com/new (no README/.gitignore/license) and will give their username; then
-  `git remote add origin https://github.com/<username>/proofpay.git` and `git push -u origin main`
-  (Git Credential Manager opens a browser sign-in).
-- Builder to do: sign up for Vercel and Supabase with GitHub; ask on Discord about testnet.
+- Pushed to private repo https://github.com/kennoe07/proofpay (`origin`, branch `main`).
+- Builder has Vercel and Supabase accounts (signed up with GitHub). No Supabase project created yet.
+- Next: import the repo on Vercel for a live URL. Builder is asking on Discord whether a testnet entry is acceptable.
 
 ## Plan
 
