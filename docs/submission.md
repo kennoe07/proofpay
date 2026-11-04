@@ -38,7 +38,7 @@ How it works:
 5. Every paid job lands on a public track record page, with each receipt verifiable on EAS.
 
 Try it, quickest first:
-- No wallet needed: open a real track record at https://proofpay-rho.vercel.app/u/0xknight, open "test payment 1", and click "Verify on EAS" to see the onchain receipt.
+- No wallet needed: open a real paid invoice at https://proofpay-rho.vercel.app/i/b3aa8a7c-70ea-4c3a-b314-0add4b8dbde9 and click "Verify on EAS" to see its onchain receipt. Click the freelancer's name to see their public track record.
 - Full flow (about 5 minutes, free): sign in at /dashboard, create a Test mode invoice for 1 USDC, then pay it from a second wallet on Base Sepolia (free test USDC at faucet.circle.com). Watch it flip to Paid, add a file as evidence, and get the onchain receipt.
 
 Each invoice can be Test mode (Base Sepolia, free test USDC) or Live (Base mainnet, real USDC). Live payments are verified the same way; onchain receipts are enabled for Test mode now and coming for Live.
