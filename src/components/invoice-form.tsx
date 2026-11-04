@@ -6,12 +6,42 @@ import { createInvoice } from "@/app/dashboard/actions";
 const inputClass =
   "w-full rounded-2xl border border-line bg-surface-2/60 px-4 py-3 text-sm outline-none transition-colors focus:border-accent";
 
-export function InvoiceForm() {
+const networks = [
+  { value: "test", title: "Test mode", body: "Base Sepolia, free test USDC. For trying things out." },
+  { value: "live", title: "Live", body: "Base mainnet. Your client pays real USDC." },
+] as const;
+
+export function InvoiceForm({ defaultNetwork }: { defaultNetwork: "test" | "live" }) {
   const [state, action, pending] = useActionState(createInvoice, undefined);
   const fields = state?.fields;
+  const selectedNetwork = fields?.network ?? defaultNetwork;
 
   return (
     <form action={action} className="space-y-6 rounded-3xl border border-line bg-surface p-6 sm:p-8">
+      <fieldset>
+        <legend className="mb-2 text-sm font-medium">Network</legend>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {networks.map((network) => (
+            <label
+              key={network.value}
+              className="flex cursor-pointer gap-3 rounded-2xl border border-line bg-surface-2/60 p-4 transition-colors has-[:checked]:border-accent has-[:checked]:bg-accent/5"
+            >
+              <input
+                type="radio"
+                name="network"
+                value={network.value}
+                defaultChecked={selectedNetwork === network.value}
+                className="mt-1 accent-[var(--accent)]"
+              />
+              <span>
+                <span className="block text-sm font-medium">{network.title}</span>
+                <span className="mt-0.5 block text-xs leading-5 text-muted">{network.body}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <Field label="What was the job?" htmlFor="title">
         <input
           id="title"
@@ -53,6 +83,17 @@ export function InvoiceForm() {
           </div>
         </Field>
       </div>
+
+      <Field label="Due date" hint="Optional" htmlFor="dueDate">
+        <input
+          id="dueDate"
+          name="dueDate"
+          type="date"
+          min={new Date().toISOString().slice(0, 10)}
+          defaultValue={fields?.dueDate}
+          className={`${inputClass} sm:max-w-xs`}
+        />
+      </Field>
 
       <Field label="Description" hint="Optional" htmlFor="description">
         <textarea

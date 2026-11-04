@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { parseUnits } from "viem";
-import { chain, USDC_DECIMALS } from "@/lib/chain";
+import { USDC_DECIMALS } from "@/lib/chain";
+import { base, baseSepolia } from "viem/chains";
 import { clearSession, getSession } from "@/lib/session";
 import { supabaseAdmin } from "@/lib/supabase-server";
 
@@ -47,7 +48,23 @@ export async function createInvoice(_prev: FormState, formData: FormData): Promi
     client: text(formData, "client"),
     amount: text(formData, "amount"),
     description: text(formData, "description"),
+    network: text(formData, "network"),
+    dueDate: text(formData, "dueDate"),
   };
+
+  // Test mode uses Base Sepolia (free test USDC); Live uses Base with real USDC.
+  if (fields.network !== "test" && fields.network !== "live") {
+    return { error: "Choose Test or Live.", fields };
+  }
+  const chainId = fields.network === "live" ? base.id : baseSepolia.id;
+
+  if (fields.dueDate) {
+    const today = new Date().toISOString().slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fields.dueDate) || Number.isNaN(Date.parse(fields.dueDate))) {
+      return { error: "That due date isn't valid.", fields };
+    }
+    if (fields.dueDate < today) return { error: "The due date can't be in the past.", fields };
+  }
 
   if (!fields.title || fields.title.length > 120) {
     return { error: "Give the job a title (up to 120 characters).", fields };
@@ -68,11 +85,12 @@ export async function createInvoice(_prev: FormState, formData: FormData): Promi
     .from("invoices")
     .insert({
       freelancer_address: session.address,
-      chain_id: chain.id,
+      chain_id: chainId,
       title: fields.title,
       client_name: fields.client || null,
       description: fields.description || null,
       amount_units: units.toString(),
+      due_date: fields.dueDate || null,
     })
     .select("id")
     .single();
@@ -80,6 +98,29 @@ export async function createInvoice(_prev: FormState, formData: FormData): Promi
 
   revalidatePath("/dashboard");
   redirect(`/i/${data.id}?created=1`);
+}
+
+export async function cancelInvoice(invoiceId: string): Promise<{ error?: string }> {
+  const session = await getSession();
+  if (!session) return { error: "Your session has expired. Please sign in again." };
+
+  // Only the owner can cancel, and only while it's still unpaid.
+  const { data, error } = await supabaseAdmin()
+    .from("invoices")
+    .update({ status: "cancelled" })
+    .eq("id", invoiceId)
+    .eq("freelancer_address", session.address)
+    .eq("status", "unpaid")
+    .select("id");
+  if (error) {
+    console.error("cancelInvoice failed", error);
+    return { error: "Couldn't cancel the invoice. Please try again." };
+  }
+  if (!data?.length) return { error: "Only unpaid invoices you created can be cancelled." };
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/i/${invoiceId}`);
+  return {};
 }
 
 export async function signOut() {

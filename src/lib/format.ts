@@ -13,6 +13,12 @@ export function shortAddress(address: string) {
   return `${address.slice(0, 6)}…${address.slice(-4)}`;
 }
 
+// Due dates are calendar dates (YYYY-MM-DD). An unpaid invoice is overdue the day after.
+export function isOverdue(invoice: { status: string; due_date: string | null }) {
+  if (invoice.status !== "unpaid" || !invoice.due_date) return false;
+  return invoice.due_date < new Date().toISOString().slice(0, 10);
+}
+
 export function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
     day: "numeric",

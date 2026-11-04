@@ -25,7 +25,8 @@ export type Invoice = {
   description: string | null;
   client_name: string | null;
   amount_units: number;
-  status: "unpaid" | "paid";
+  status: "unpaid" | "paid" | "cancelled";
+  due_date: string | null;
   created_at: string;
   payment_tx_hash: string | null;
   payer_address: string | null;

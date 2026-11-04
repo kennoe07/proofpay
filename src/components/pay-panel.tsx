@@ -14,10 +14,10 @@ import {
 } from "wagmi";
 import { waitForTransactionReceipt } from "wagmi/actions";
 import { WalletPicker } from "@/components/wallet-picker";
-import { chain, explorerTxUrl, isTestnet, USDC_ADDRESS } from "@/lib/chain";
+import { explorerTxUrl, getChain, isTestnetChain, usdcAddress } from "@/lib/chain";
 import { formatUsdc, shortAddress } from "@/lib/format";
 
-type Props = { invoiceId: string; amountUnits: string; payTo: string };
+type Props = { invoiceId: string; amountUnits: string; payTo: string; chainId: number };
 
 // Remembers a sent payment so the check can finish even if the tab is closed mid-way.
 const pendingKey = (id: string) => `pp_pending_${id}`;
@@ -42,10 +42,14 @@ function writePending(id: string, hash: Hash | null) {
 const button =
   "w-full rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition hover:brightness-110 disabled:opacity-60";
 
-export function PayPanel({ invoiceId, amountUnits, payTo }: Props) {
+export function PayPanel({ invoiceId, amountUnits, payTo, chainId }: Props) {
   const router = useRouter();
   const config = useConfig();
   const amount = BigInt(amountUnits);
+  // The invoice's own network: Base Sepolia (Test mode) or Base (Live).
+  const chain = getChain(chainId)!;
+  const isTestnet = isTestnetChain(chainId);
+  const usdc = usdcAddress(chainId);
   // The network the wallet is actually on. (useChainId() reports the app's configured chain,
   // which is always Base here, so it can't detect a wallet sitting on another network.)
   const { address, isConnected, chainId: walletChainId } = useAccount();
@@ -59,7 +63,7 @@ export function PayPanel({ invoiceId, amountUnits, payTo }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const { data: balance } = useReadContract({
-    address: USDC_ADDRESS,
+    address: usdc,
     abi: erc20Abi,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
@@ -106,7 +110,7 @@ export function PayPanel({ invoiceId, amountUnits, payTo }: Props) {
       // Belt and braces: make sure the wallet is on the invoice's network before sending.
       if (walletChainId !== chain.id) await switchChainAsync({ chainId: chain.id });
       txHash = await writeContractAsync({
-        address: USDC_ADDRESS,
+        address: usdc,
         abi: erc20Abi,
         functionName: "transfer",
         args: [payTo as `0x${string}`, amount],
@@ -162,7 +166,7 @@ export function PayPanel({ invoiceId, amountUnits, payTo }: Props) {
               : "A payment from this browser still needs checking."}
         </p>
         <a
-          href={explorerTxUrl(hash)}
+          href={explorerTxUrl(chainId, hash)}
           target="_blank"
           rel="noreferrer"
           className="block font-mono text-accent underline-offset-4 hover:underline"
@@ -254,6 +258,7 @@ export function PayPanel({ invoiceId, amountUnits, payTo }: Props) {
       </div>
       <p className="mt-1 mb-6 text-sm text-muted">
         One USDC transfer on {chain.name}, straight to the freelancer&apos;s wallet.
+        {!isTestnet && <strong className="font-medium text-foreground"> This sends real USDC.</strong>}
       </p>
       {body}
       {error && (

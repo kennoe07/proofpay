@@ -1,4 +1,4 @@
--- ProofPay database schema.
+-- ProofPay database schema (for a fresh project; includes every migration in supabase/migrations).
 -- Run once in Supabase: SQL Editor -> New query -> paste this file -> Run.
 --
 -- Reads are public (invoice pages and track records are meant to be shared).
@@ -21,7 +21,9 @@ create table if not exists public.invoices (
   client_name text check (char_length(client_name) <= 120),
   -- USDC has 6 decimals; store the exact base-unit amount to avoid rounding.
   amount_units bigint not null check (amount_units > 0),
-  status text not null default 'unpaid' check (status in ('unpaid', 'paid')),
+  status text not null default 'unpaid' constraint invoices_status_check
+    check (status in ('unpaid', 'paid', 'cancelled')),
+  due_date date,
   created_at timestamptz not null default now(),
 
   -- Filled in once the payment is verified onchain.
@@ -37,7 +39,7 @@ create table if not exists public.invoices (
   attestation_uid text unique,
 
   constraint paid_has_payment check (
-    status = 'unpaid' or (payment_tx_hash is not null and paid_at is not null)
+    status <> 'paid' or (payment_tx_hash is not null and paid_at is not null)
   )
 );
 

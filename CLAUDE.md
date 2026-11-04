@@ -95,6 +95,13 @@ This Next.js version differs from older training data: read `node_modules/next/d
   0xde27…a483); it was verified and marked paid. Fixed along the way: the pay panel read the app's chain
   (`useChainId`) instead of the wallet's (`useAccount().chainId`), so a wallet on Ethereum got no Switch button;
   payment errors now show the wallet's real message; a no-gas warning links to Base's faucet list.
+- Pay flow live since `5c01d0d`.
+- Live 5 Nov: per-invoice Test mode (Base Sepolia) / Live (Base) stored in `invoices.chain_id`;
+  `src/lib/chain.ts` helpers take a chain id; `NEXT_PUBLIC_CHAIN` is now only the default (sign-in + preselected
+  network). Dashboard "USDC earned" counts Live only, Test shown separately. Owner tools on unpaid invoices
+  (Copy link, Cancel with confirm, "Paid outside ProofPay?"). Optional due dates with Overdue badge.
+  Migrations 002 (due_date, 'cancelled' status) and 003 (paid_has_payment only applies to 'paid') have been run.
+  Builder tested Test-mode creation and cancelling locally.
 - Next: evidence upload + EAS receipt, then the public profile `/u/[handle]`.
 
 ## Plan

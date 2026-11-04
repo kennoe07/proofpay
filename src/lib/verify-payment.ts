@@ -1,10 +1,14 @@
 import "server-only";
 import { createPublicClient, erc20Abi, http, parseEventLogs, type Hash } from "viem";
-import { chain, publicRpcUrl, USDC_ADDRESS } from "@/lib/chain";
+import { getChain, publicRpcUrl, usdcAddress } from "@/lib/chain";
 import type { Invoice } from "@/lib/supabase-server";
 
-// Base's public endpoint: reachable from anywhere, including the builder's network.
-const client = createPublicClient({ chain, transport: http(publicRpcUrl) });
+// Base's public endpoint for the invoice's network: reachable from anywhere,
+// including the builder's network.
+function clientFor(chainId: number) {
+  const chain = getChain(chainId);
+  return chain ? createPublicClient({ chain, transport: http(publicRpcUrl(chainId)) }) : null;
+}
 
 // Allows for small clock differences between our database and Base block times.
 const CLOCK_SKEW_SECONDS = 120;
@@ -16,8 +20,9 @@ export type PaymentCheck =
 // Proves, from Base itself, that `hash` paid `invoice`. Never trusts anything the client says
 // beyond the transaction hash.
 export async function checkPayment(invoice: Invoice, hash: Hash): Promise<PaymentCheck> {
-  if (invoice.chain_id !== chain.id) {
-    return { ok: false, status: 400, error: "This invoice is on a different network." };
+  const client = clientFor(invoice.chain_id);
+  if (!client) {
+    return { ok: false, status: 400, error: "This invoice is on a network ProofPay doesn't support." };
   }
 
   let receipt;
@@ -38,7 +43,7 @@ export async function checkPayment(invoice: Invoice, hash: Hash): Promise<Paymen
   const amount = BigInt(invoice.amount_units);
   const transfer = parseEventLogs({ abi: erc20Abi, eventName: "Transfer", logs: receipt.logs }).find(
     (log) =>
-      log.address.toLowerCase() === USDC_ADDRESS.toLowerCase() &&
+      log.address.toLowerCase() === usdcAddress(invoice.chain_id).toLowerCase() &&
       log.args.to.toLowerCase() === freelancer &&
       log.args.value >= amount,
   );

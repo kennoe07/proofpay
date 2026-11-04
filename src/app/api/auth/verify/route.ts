@@ -5,7 +5,7 @@ import { createSession, takeNonce } from "@/lib/session";
 import { supabaseAdmin } from "@/lib/supabase-server";
 
 // Base's public endpoint: reachable from anywhere, and needed to verify smart wallet signatures.
-const client = createPublicClient({ chain, transport: http(publicRpcUrl) });
+const client = createPublicClient({ chain, transport: http(publicRpcUrl(chain.id)) });
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as { message?: unknown; signature?: unknown } | null;

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ClaimPaymentForm } from "@/components/claim-payment-form";
 import { CopyLink } from "@/components/copy-link";
+import { OwnerTools } from "@/components/owner-tools";
 import { PayPanelLoader } from "@/components/pay-panel-loader";
-import { StatusBadge } from "@/components/status-badge";
-import { chain, explorerTxUrl, isTestnet } from "@/lib/chain";
-import { formatDate, formatUsdc, shortAddress } from "@/lib/format";
+import { NetworkBadge, StatusBadge } from "@/components/status-badge";
+import { explorerTxUrl, getChain, isTestnetChain } from "@/lib/chain";
+import { formatDate, formatUsdc, isOverdue, shortAddress } from "@/lib/format";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
 
@@ -53,6 +53,9 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
   const from = profile?.handle ? `@${profile.handle}` : shortAddress(invoice.freelancer_address);
   const session = await getSession();
   const isOwner = session?.address === invoice.freelancer_address;
+  const network = getChain(invoice.chain_id);
+  const testnet = isTestnetChain(invoice.chain_id);
+  const overdue = isOverdue(invoice);
 
   return (
     <div className="space-y-6">
@@ -69,7 +72,10 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
       <article className="rounded-3xl border border-line bg-surface p-6 sm:p-8">
         <div className="flex items-center justify-between gap-4">
           <span className="font-mono text-xs tracking-widest text-muted">PROOFPAY INVOICE</span>
-          <StatusBadge status={invoice.status} />
+          <div className="flex items-center gap-2">
+            <NetworkBadge testnet={testnet} />
+            <StatusBadge status={invoice.status} overdue={overdue} />
+          </div>
         </div>
 
         <p className="mt-6 text-sm text-muted">
@@ -80,7 +86,7 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
           {formatUsdc(invoice.amount_units)} <span className="text-xl font-medium text-muted">USDC</span>
         </p>
         <p className="mt-1 text-sm text-muted">
-          Issued {formatDate(invoice.created_at)} · on {chain.name}
+          Issued {formatDate(invoice.created_at)} · on {network?.name ?? "an unknown network"}
         </p>
 
         {invoice.description && (
@@ -94,6 +100,15 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
             <dt className="text-muted">Pays to</dt>
             <dd className="font-mono">{shortAddress(invoice.freelancer_address)}</dd>
           </div>
+          {invoice.due_date && (
+            <div className="flex items-center justify-between gap-4 px-4 py-3">
+              <dt className="text-muted">Due</dt>
+              <dd className={overdue ? "font-medium text-red-500" : undefined}>
+                {formatDate(invoice.due_date)}
+                {overdue && " · overdue"}
+              </dd>
+            </div>
+          )}
           {invoice.paid_at && (
             <div className="flex items-center justify-between gap-4 px-4 py-3">
               <dt className="text-muted">Paid</dt>
@@ -110,7 +125,7 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
               <dt className="text-muted">Payment tx</dt>
               <dd>
                 <a
-                  href={explorerTxUrl(invoice.payment_tx_hash)}
+                  href={explorerTxUrl(invoice.chain_id, invoice.payment_tx_hash)}
                   target="_blank"
                   rel="noreferrer"
                   className="font-mono text-accent underline-offset-4 hover:underline"
@@ -121,25 +136,32 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
             </div>
           )}
         </dl>
+
+        {invoice.status === "cancelled" && (
+          <p className="mt-6 rounded-2xl bg-surface-2 px-4 py-3 text-sm text-muted">
+            This invoice was cancelled by the freelancer, so it can&apos;t be paid.
+          </p>
+        )}
       </article>
 
-      {invoice.status === "unpaid" && (
+      {invoice.status === "unpaid" && network && (
         <>
+          {isOwner && <OwnerTools invoiceId={invoice.id} />}
           {/* Everyone sees what the client sees; the panel refuses payment from the invoice's own wallet. */}
           <PayPanelLoader
             invoiceId={invoice.id}
             amountUnits={String(invoice.amount_units)}
             payTo={invoice.freelancer_address}
+            chainId={invoice.chain_id}
           />
-          {isOwner && <ClaimPaymentForm invoiceId={invoice.id} />}
         </>
       )}
 
-      {isTestnet && (
-        <p className="text-center text-xs text-muted">
-          This invoice is on {chain.name}, a test network. No real money is involved.
-        </p>
-      )}
+      <p className="text-center text-xs text-muted">
+        {testnet
+          ? `Test mode: this invoice is on ${network?.name}, a test network. No real money is involved.`
+          : `Live: this invoice is paid in real USDC on ${network?.name ?? "Base"}.`}
+      </p>
     </div>
   );
 }

@@ -21,6 +21,9 @@ export async function POST(request: Request, ctx: RouteContext<"/api/invoices/[i
   const { data: invoice } = await db.from("invoices").select("*").eq("id", id).maybeSingle<Invoice>();
   if (!invoice) return Response.json({ error: "Invoice not found." }, { status: 404 });
 
+  if (invoice.status === "cancelled") {
+    return Response.json({ error: "This invoice was cancelled, so it can't be paid." }, { status: 409 });
+  }
   if (invoice.status === "paid") {
     return invoice.payment_tx_hash === txHash
       ? Response.json({ ok: true })

@@ -3,8 +3,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { HandleForm } from "@/components/handle-form";
 import { WalletSignIn } from "@/components/wallet-sign-in";
-import { StatusBadge } from "@/components/status-badge";
-import { formatDate, formatUsdc, shortAddress } from "@/lib/format";
+import { NetworkBadge, StatusBadge } from "@/components/status-badge";
+import { isTestnetChain } from "@/lib/chain";
+import { formatDate, formatUsdc, isOverdue, shortAddress } from "@/lib/format";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
 import { signOut } from "./actions";
@@ -50,7 +51,10 @@ async function Dashboard() {
   ]);
 
   const paid = (invoices ?? []).filter((i) => i.status === "paid");
-  const earned = paid.reduce((sum, i) => sum + BigInt(i.amount_units), BigInt(0));
+  // Real earnings only count Live invoices; Test mode payments are shown separately.
+  const total = (list: Invoice[]) => list.reduce((sum, i) => sum + BigInt(i.amount_units), BigInt(0));
+  const earned = total(paid.filter((i) => !isTestnetChain(i.chain_id)));
+  const earnedTest = total(paid.filter((i) => isTestnetChain(i.chain_id)));
 
   return (
     <div className="space-y-8">
@@ -81,7 +85,11 @@ async function Dashboard() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat label="Invoices" value={String(invoices?.length ?? 0)} />
         <Stat label="Paid" value={String(paid.length)} />
-        <Stat label="USDC earned" value={formatUsdc(earned)} />
+        <Stat
+          label="USDC earned"
+          value={formatUsdc(earned)}
+          note={earnedTest > BigInt(0) ? `+ ${formatUsdc(earnedTest)} in Test mode` : undefined}
+        />
       </div>
 
       {invoices && invoices.length > 0 ? (
@@ -99,7 +107,8 @@ async function Dashboard() {
                     {formatDate(invoice.created_at)}
                   </p>
                 </div>
-                <StatusBadge status={invoice.status} />
+                {isTestnetChain(invoice.chain_id) && <NetworkBadge testnet />}
+                <StatusBadge status={invoice.status} overdue={isOverdue(invoice)} />
                 <p className="w-28 text-right font-mono text-sm">{formatUsdc(invoice.amount_units)}</p>
               </Link>
             </li>
@@ -121,11 +130,12 @@ async function Dashboard() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
     <div className="rounded-3xl border border-line bg-surface p-6">
       <p className="text-2xl font-semibold">{value}</p>
       <p className="mt-1 text-sm text-muted">{label}</p>
+      {note && <p className="mt-1 text-xs text-muted">{note}</p>}
     </div>
   );
 }

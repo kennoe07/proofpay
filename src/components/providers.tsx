@@ -6,21 +6,22 @@ import { useState } from "react";
 import type { Chain } from "viem";
 import { createConfig, fallback, http, WagmiProvider } from "wagmi";
 import { baseAccount, injected } from "wagmi/connectors";
-import { cdpRpcUrl, chain, publicRpcUrl } from "@/lib/chain";
+import { cdpRpcUrl, chain, publicRpcUrl, supportedChains } from "@/lib/chain";
 
 const apiKey = process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || undefined;
 
+// Both networks (Test and Live), with the default one first.
+const chains = [chain, ...supportedChains.filter((c) => c.id !== chain.id)] as [Chain, ...Chain[]];
+
 // Try Coinbase's endpoint first when there's a key, then Base's public one, so the
 // app keeps working on networks that can't reach Coinbase.
-// `chain` is Base or Base Sepolia depending on config; widen it so wagmi accepts either.
-const appChain: Chain = chain;
+const transport = (chainId: number) =>
+  fallback([...(apiKey ? [http(cdpRpcUrl(apiKey, chainId))] : []), http(publicRpcUrl(chainId))]);
 
 const wagmiConfig = createConfig({
-  chains: [appChain],
+  chains,
   connectors: [baseAccount({ appName: "ProofPay" }), injected()],
-  transports: {
-    [appChain.id]: fallback([...(apiKey ? [http(cdpRpcUrl(apiKey))] : []), http(publicRpcUrl)]),
-  },
+  transports: Object.fromEntries(chains.map((c) => [c.id, transport(c.id)])),
   ssr: true,
 });
 
