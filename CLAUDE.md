@@ -128,7 +128,10 @@ This Next.js version differs from older training data: read `node_modules/next/d
   data, `"use cache"` + `cacheLife("minutes")`, falls back to `TrackRecordPreview`); `FEATURED_HANDLE` in
   `src/app/page.tsx`. Track record lookups shared via `src/lib/track-record.ts`. Hero receipt stays an Example.
 - Next: mobile/UX polish,
-  demo video, submission. Open: MetaMask warning, testnet answer on Discord, mainnet funding for Live receipts.
+  demo video, submission. Open: MetaMask warning, testnet answer on Discord.
+- Decided 5 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Until funded, receipts
+  on Live invoices fail with "the onchain receipt couldn't be written". Landing "Checked, not claimed" tile lists
+  the five payment checks (keep in sync with `src/lib/verify-payment.ts`).
 
 ## Plan
 

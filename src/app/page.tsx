@@ -10,6 +10,15 @@ const builtWith = ["Base", "USDC", "Ethereum Attestation Service", "Coinbase Sma
 
 const steps = ["Send a USDC invoice", "Get paid on Base", "Receive an onchain receipt"];
 
+// What ProofPay verifies on Base before a payment counts (see src/lib/verify-payment.ts).
+const checks = [
+  "Official USDC on Base",
+  "Sent to the freelancer's wallet",
+  "At least the invoice amount",
+  "Made after the invoice was created",
+  "Never reused for another invoice",
+];
+
 const features = [
   {
     title: "USDC invoices",
@@ -193,16 +202,26 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between rounded-3xl border border-line bg-surface p-8 md:col-span-2">
+            <div className="flex flex-col rounded-3xl border border-line bg-surface p-8 md:col-span-2">
               <span className="grid size-10 place-items-center rounded-xl bg-accent/10 text-accent">
                 <Icon d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6zM9 12l2 2 4-4" />
               </span>
-              <div className="mt-10">
+              <div className="mt-6">
                 <h3 className="text-xl font-semibold tracking-tight">Checked, not claimed</h3>
                 <p className="mt-2 text-sm leading-6 text-muted">
                   A job only counts once its payment is confirmed on Base.
                 </p>
               </div>
+              <ul className="mt-6 space-y-2.5 text-sm">
+                {checks.map((check) => (
+                  <li key={check} className="flex items-center gap-2.5">
+                    <span className="grid size-5 shrink-0 place-items-center rounded-full bg-accent/15 text-accent">
+                      <Icon d="M5 12.5l4.5 4.5L19 7.5" className="size-3" />
+                    </span>
+                    {check}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="md:col-span-4">
