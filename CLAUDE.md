@@ -71,7 +71,7 @@ This Next.js version differs from older training data: read `node_modules/next/d
 - Landing page redesigned (dark default, light/dark toggle in `src/components/theme-toggle.tsx`).
 - Supabase project `bgsswdarznmpgcdfduzr` (Frankfurt). `supabase/schema.sql` has been run: `profiles` and
   `invoices` exist, public reads work, and writes with the publishable key are refused (RLS). Keys are in `.env.local`.
-- Live since Thu 5 Nov (`329a95d`): Sign-In With Ethereum (`/api/auth/nonce`, `/api/auth/verify`, signed
+- Live since Wed 4 Nov (`329a95d`): Sign-In With Ethereum (`/api/auth/nonce`, `/api/auth/verify`, signed
   httpOnly session cookie in `src/lib/session.ts`), `/dashboard` (handle setup, invoice list, stats),
   `/dashboard/new` (server action `createInvoice`), public invoice page `/i/[id]`.
   Tested with a throwaway wallet: valid sign-in works; forged signatures and reused nonces are rejected.
@@ -79,62 +79,62 @@ This Next.js version differs from older training data: read `node_modules/next/d
   pulls in `@coinbase/cdp-sdk`, whose optional `@x402/*` peers aren't installed, which breaks SSR builds.
 - Cache Components is on: anything reading cookies, params or the database must sit inside `<Suspense>`.
 - Vercel has all six env vars (Production); `SUPABASE_SECRET_KEY` and `SESSION_SECRET` are type Secret.
-  `SESSION_SECRET` was rotated on 5 Nov after appearing in a screenshot.
+  `SESSION_SECRET` was rotated on 4 Nov after appearing in a screenshot.
 - Builder signed in with a real wallet and created an invoice locally; it works.
 - MetaMask once showed "signs of phishing or wallet-draining" on
-  proofpay-rho.vercel.app. Not on the public eth-phishing-detect list (checked 5 Nov), so it's the live scanner.
-  Options offered: report the false positive, and/or a custom domain. 5 Nov: builder opened the site in another
+  proofpay-rho.vercel.app. Not on the public eth-phishing-detect list (checked 4 Nov), so it's the live scanner.
+  Options offered: report the false positive, and/or a custom domain. 4 Nov: builder opened the site in another
   browser and it wasn't flagged, so it's deprioritised (warning appeared on connecting MetaMask, worth a recheck).
-- Pay flow built (5 Nov, not yet pushed): `src/components/pay-panel.tsx` (connect, switch chain, balance,
+- Pay flow built (4 Nov, not yet pushed): `src/components/pay-panel.tsx` (connect, switch chain, balance,
   USDC `transfer`, wait for receipt, then claim), `POST /api/invoices/[id]/pay` + `src/lib/verify-payment.ts`
   (receipt success, official USDC Transfer log to the freelancer for >= amount, payer != freelancer, block time
   >= invoice created_at, tx hash unique; update only if still unpaid). Owner-only "Paid outside ProofPay?" form.
   Verified against a real Base Sepolia transfer: accept, idempotent re-claim, and 5 rejection cases.
 - Known limitation: an ERC-20 transfer can't carry an invoice id, so if a freelancer has two unpaid invoices
   for the same amount, whoever claims a matching transfer first decides which one it pays.
-- 5 Nov: builder paid a real 1 USDC invoice on Base Sepolia from a second wallet (0x9b92…edf8 to
+- 4 Nov: builder paid a real 1 USDC invoice on Base Sepolia from a second wallet (0x9b92…edf8 to
   0xde27…a483); it was verified and marked paid. Fixed along the way: the pay panel read the app's chain
   (`useChainId`) instead of the wallet's (`useAccount().chainId`), so a wallet on Ethereum got no Switch button;
   payment errors now show the wallet's real message; a no-gas warning links to Base's faucet list.
 - Pay flow live since `5c01d0d`.
-- Live 5 Nov: per-invoice Test mode (Base Sepolia) / Live (Base) stored in `invoices.chain_id`;
+- Live 4 Nov: per-invoice Test mode (Base Sepolia) / Live (Base) stored in `invoices.chain_id`;
   `src/lib/chain.ts` helpers take a chain id; `NEXT_PUBLIC_CHAIN` is now only the default (sign-in + preselected
   network). Dashboard "USDC earned" counts Live only, Test shown separately. Owner tools on unpaid invoices
   (Copy link, Cancel with confirm, "Paid outside ProofPay?"). Optional due dates with Overdue badge.
   Migrations 002 (due_date, 'cancelled' status) and 003 (paid_has_payment only applies to 'paid') have been run.
   Builder tested Test-mode creation and cancelling locally.
-- Receipts built (5 Nov, not yet pushed; builder chose "ProofPay's own wallet signs"):
+- Receipts built (4 Nov, not yet pushed; builder chose "ProofPay's own wallet signs"):
   signer wallet 0x29190FEfB849BFBf67270D469B8Ad116aC9D7293, key in `.env.local` as `ATTESTER_PRIVATE_KEY`
   (generated locally, never displayed). Schema in `src/lib/eas-schema.ts`, registered per network with
   `scripts/register-eas-schema.mjs` (not yet registered: signer has 0 ETH). Public Supabase Storage bucket
   `evidence` (10 MB limit) created via API. Flow: paid invoice → owner's `EvidenceForm` (file via signed upload
   URL, or https link) → `POST /api/invoices/[id]/receipt` (SHA-256 of stored file, save evidence, `attestReceipt`
   in `src/lib/eas.ts`, save `attestation_uid`) → `ReceiptCard` with "Verify on EAS" (base-sepolia.easscan.org).
-- 5 Nov: signer funded; schema registered on Base Sepolia (uid 0x111b…c5c0). Builder created the first receipt
+- 4 Nov: signer funded; schema registered on Base Sepolia (uid 0x111b…c5c0). Builder created the first receipt
   locally (invoice ed159899…); read back from EAS: attester, recipient, schema, amount, token, payer, tx and file
   hash all correct. Its invoiceUrl says localhost (permanent), so receipt links now use `NEXT_PUBLIC_SITE_URL`.
-- Vercel has `ATTESTER_PRIVATE_KEY` (Secret) and `NEXT_PUBLIC_SITE_URL`; receipts pushed live 5 Nov.
+- Vercel has `ATTESTER_PRIVATE_KEY` (Secret) and `NEXT_PUBLIC_SITE_URL`; receipts pushed live 4 Nov.
   For Live receipts the signer also needs ETH on Base mainnet and the schema registered there
   (`node --env-file=.env.local scripts/register-eas-schema.mjs base`).
-- Track record page live 5 Nov: `/u/[handle]` (also accepts a wallet address), profile header
+- Track record page live 4 Nov: `/u/[handle]` (also accepts a wallet address), profile header
   with Copy link, stats (paid jobs, Live USDC earned + Test separately, receipts), paid jobs with TEST and
   "Receipt ↗" (EAS) badges. Client names deliberately hidden on this public list (builder can change that).
   Dashboard links to it ("View public profile →"). Tested by handle, by address, unknown and invalid handles.
-- Live 5 Nov: own logo (receipt + check, `src/components/logo.tsx`, `src/app/icon.svg`) replacing
+- Live 4 Nov: own logo (receipt + check, `src/components/logo.tsx`, `src/app/icon.svg`) replacing
   the `>_` mark, which is Vibestarter's brand mark; default favicon.ico deleted. Unused `.cursor-blink` CSS kept in
   `globals.css` at the builder's request. Profile pictures: `profiles.avatar_url` (migration 004, run
-  5 Nov), public `avatars` bucket (2 MB, png/jpeg/webp/gif only, created via API), `/api/profile/avatar`
+  4 Nov), public `avatars` bucket (2 MB, png/jpeg/webp/gif only, created via API), `/api/profile/avatar`
   POST/PUT/DELETE, `AvatarUploader` on the dashboard, `Avatar` on the profile and invoice pages.
-- Landing page (live 5 Nov): the Track record bento card is now `FeaturedTrackRecord` (real @0xknight
+- Landing page (live 4 Nov): the Track record bento card is now `FeaturedTrackRecord` (real @0xknight
   data, `"use cache"` + `cacheLife("minutes")`, falls back to `TrackRecordPreview`); `FEATURED_HANDLE` in
   `src/app/page.tsx`. Track record lookups shared via `src/lib/track-record.ts`. Hero receipt stays an Example.
-- Live 5 Nov: link previews (`opengraph-image.tsx` for home, `/i/[id]`, `/u/[handle]`;
+- Live 4 Nov: link previews (`opengraph-image.tsx` for home, `/i/[id]`, `/u/[handle]`;
   `metadataBase` from `NEXT_PUBLIC_SITE_URL`), branded `src/app/not-found.tsx`, dashboard "Add evidence" nudge,
   handle editing (`HandleEditor`, keyed by handle). Landing features `FEATURED_HANDLE = "0xknight"`: update it if
   the builder changes handle.
 - Next: mobile/UX polish,
   demo video, submission. Open: MetaMask warning, testnet answer on Discord.
-- Decided 5 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by
+- Decided 4 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by
   `receiptsEnabled()` (`src/lib/eas-schema.ts`): Test always, Live only with `NEXT_PUBLIC_LIVE_RECEIPTS=true`
   (set it in Vercel after funding + `register-eas-schema.mjs base`). Before that gating existed, receipts
   on Live invoices fail with "the onchain receipt couldn't be written". Landing "Checked, not claimed" tile lists
