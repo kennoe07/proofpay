@@ -115,7 +115,12 @@ This Next.js version differs from older training data: read `node_modules/next/d
 - Vercel has `ATTESTER_PRIVATE_KEY` (Secret) and `NEXT_PUBLIC_SITE_URL`; receipts pushed live 5 Nov.
   For Live receipts the signer also needs ETH on Base mainnet and the schema registered there
   (`node --env-file=.env.local scripts/register-eas-schema.mjs base`).
-- Next: the public profile `/u/[handle]`.
+- Track record page live 5 Nov: `/u/[handle]` (also accepts a wallet address), profile header
+  with Copy link, stats (paid jobs, Live USDC earned + Test separately, receipts), paid jobs with TEST and
+  "Receipt ↗" (EAS) badges. Client names deliberately hidden on this public list (builder can change that).
+  Dashboard links to it ("View public profile →"). Tested by handle, by address, unknown and invalid handles.
+- Next: replace the landing page's "Example" track record with a link to a real one, mobile/UX polish,
+  demo video, submission. Open: MetaMask warning, testnet answer on Discord, mainnet funding for Live receipts.
 
 ## Plan
 

@@ -64,6 +64,12 @@ async function Dashboard() {
             {profile?.handle ? `@${profile.handle}` : shortAddress(session.address)}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Your invoices</h1>
+          <Link
+            href={`/u/${profile?.handle ?? session.address}`}
+            className="mt-2 inline-block text-sm text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            View public profile →
+          </Link>
         </div>
         <div className="flex items-center gap-3">
           <form action={signOut}>
