@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { AvatarUploader } from "@/components/avatar-uploader";
 import { HandleForm } from "@/components/handle-form";
 import { WalletSignIn } from "@/components/wallet-sign-in";
 import { NetworkBadge, StatusBadge } from "@/components/status-badge";
@@ -64,12 +65,6 @@ async function Dashboard() {
             {profile?.handle ? `@${profile.handle}` : shortAddress(session.address)}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Your invoices</h1>
-          <Link
-            href={`/u/${profile?.handle ?? session.address}`}
-            className="mt-2 inline-block text-sm text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
-          >
-            View public profile →
-          </Link>
         </div>
         <div className="flex items-center gap-3">
           <form action={signOut}>
@@ -85,6 +80,19 @@ async function Dashboard() {
           </Link>
         </div>
       </div>
+
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-line bg-surface p-6">
+        <AvatarUploader
+          url={profile?.avatar_url ?? null}
+          name={profile?.handle ?? session.address}
+        />
+        <Link
+          href={`/u/${profile?.handle ?? session.address}`}
+          className="rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors hover:bg-surface-2"
+        >
+          View public profile →
+        </Link>
+      </section>
 
       {!profile?.handle && <HandleForm />}
 

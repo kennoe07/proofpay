@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Avatar } from "@/components/avatar";
 import { CopyLink } from "@/components/copy-link";
 import { NetworkBadge } from "@/components/status-badge";
 import { isTestnetChain } from "@/lib/chain";
@@ -65,7 +66,6 @@ async function TrackRecord({ params }: Pick<PageProps<"/u/[handle]">, "params">)
 
   const { profile, jobs } = found;
   const name = displayName(profile);
-  const initials = (profile.handle ?? profile.wallet_address.slice(2)).slice(0, 2).toUpperCase();
   const path = `/u/${profile.handle ?? profile.wallet_address}`;
 
   const live = jobs.filter((j) => !isTestnetChain(j.chain_id));
@@ -79,9 +79,7 @@ async function TrackRecord({ params }: Pick<PageProps<"/u/[handle]">, "params">)
     <div className="space-y-6">
       <section className="flex flex-col gap-6 rounded-3xl border border-line bg-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <div className="flex items-center gap-4">
-          <div className="grid size-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent to-emerald-700 text-xl font-semibold text-accent-ink">
-            {initials}
-          </div>
+          <Avatar url={profile.avatar_url} name={profile.handle ?? profile.wallet_address} className="size-16 text-xl" />
           <div className="min-w-0">
             <p className="font-mono text-xs tracking-widest text-muted">TRACK RECORD</p>
             <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">{name}</h1>

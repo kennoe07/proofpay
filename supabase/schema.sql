@@ -9,6 +9,7 @@ create table if not exists public.profiles (
   wallet_address text primary key check (wallet_address = lower(wallet_address)),
   handle text unique check (handle ~ '^[a-z0-9_]{3,24}$'),
   display_name text check (char_length(display_name) <= 60),
+  avatar_url text constraint profiles_avatar_url_check check (char_length(avatar_url) <= 500),
   created_at timestamptz not null default now()
 );
 

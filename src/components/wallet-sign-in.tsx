@@ -8,7 +8,7 @@ const SignInWallet = dynamic(() => import("./sign-in-wallet").then((m) => m.Sign
   ssr: false,
   loading: () => (
     <div className="mx-auto w-full max-w-md rounded-3xl border border-line bg-surface p-8" aria-busy>
-      <p className="font-mono text-sm text-accent">&gt;_ sign in</p>
+      <p className="text-sm font-medium text-accent">Sign in</p>
       <div className="mt-4 h-7 w-2/3 animate-pulse rounded-lg bg-surface-2" />
       <div className="mt-8 h-16 animate-pulse rounded-2xl bg-surface-2" />
       <div className="mt-3 h-16 animate-pulse rounded-2xl bg-surface-2" />

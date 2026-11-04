@@ -14,6 +14,7 @@ export type Profile = {
   wallet_address: string;
   handle: string | null;
   display_name: string | null;
+  avatar_url: string | null;
   created_at: string;
 };
 

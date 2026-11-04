@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Avatar } from "@/components/avatar";
 import { Suspense } from "react";
 import { CopyLink } from "@/components/copy-link";
 import { EvidenceForm } from "@/components/evidence-form";
@@ -80,8 +82,15 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
           </div>
         </div>
 
-        <p className="mt-6 text-sm text-muted">
-          {invoice.client_name ? `For ${invoice.client_name} · ` : ""}From {from}
+        <p className="mt-6 flex flex-wrap items-center gap-1.5 text-sm text-muted">
+          {invoice.client_name ? `For ${invoice.client_name} · ` : ""}From
+          <Link
+            href={`/u/${profile?.handle ?? invoice.freelancer_address}`}
+            className="inline-flex items-center gap-1.5 text-foreground underline-offset-4 hover:underline"
+          >
+            <Avatar url={profile?.avatar_url} name={from} className="size-5 text-[9px]" />
+            {from}
+          </Link>
         </p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">{invoice.title}</h1>
         <p className="mt-4 text-4xl font-semibold tracking-tight">

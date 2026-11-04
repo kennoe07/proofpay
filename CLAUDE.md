@@ -119,6 +119,11 @@ This Next.js version differs from older training data: read `node_modules/next/d
   with Copy link, stats (paid jobs, Live USDC earned + Test separately, receipts), paid jobs with TEST and
   "Receipt ↗" (EAS) badges. Client names deliberately hidden on this public list (builder can change that).
   Dashboard links to it ("View public profile →"). Tested by handle, by address, unknown and invalid handles.
+- Live 5 Nov: own logo (receipt + check, `src/components/logo.tsx`, `src/app/icon.svg`) replacing
+  the `>_` mark, which is Vibestarter's brand mark; default favicon.ico deleted. Unused `.cursor-blink` CSS kept in
+  `globals.css` at the builder's request. Profile pictures: `profiles.avatar_url` (migration 004, run
+  5 Nov), public `avatars` bucket (2 MB, png/jpeg/webp/gif only, created via API), `/api/profile/avatar`
+  POST/PUT/DELETE, `AvatarUploader` on the dashboard, `Avatar` on the profile and invoice pages.
 - Next: replace the landing page's "Example" track record with a link to a real one, mobile/UX polish,
   demo video, submission. Open: MetaMask warning, testnet answer on Discord, mainnet funding for Live receipts.
 

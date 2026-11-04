@@ -1,3 +1,4 @@
+import { Logo } from "@/components/logo";
 import { ReceiptPreview } from "@/components/receipt-preview";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TrackRecordPreview } from "@/components/track-record-preview";
@@ -81,9 +82,8 @@ export default function Home() {
 
       <header className="sticky top-4 z-20 mx-auto mt-4 w-full max-w-3xl px-4">
         <nav className="flex items-center justify-between gap-4 rounded-full border border-line bg-surface/80 py-2 pr-2 pl-5 shadow-lg shadow-black/30 backdrop-blur light:shadow-black/5">
-          <a href="#" className="font-mono text-base font-medium">
-            <span className="text-accent">&gt;_</span> proofpay
-            <span className="cursor-blink text-accent">▍</span>
+          <a href="#" aria-label="ProofPay home">
+            <Logo />
           </a>
           <div className="flex items-center gap-3 text-sm text-muted sm:gap-5">
             <a href="#how" className="hidden transition-colors hover:text-foreground sm:inline">
@@ -155,7 +155,7 @@ export default function Home() {
 
           <div className="mt-12 grid gap-4 md:grid-cols-6">
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-300 via-emerald-400 to-emerald-600 p-8 text-emerald-950 md:col-span-3">
-              <p className="font-mono text-sm opacity-80">&gt;_ proofpay</p>
+              <p className="text-sm font-semibold tracking-tight opacity-80">ProofPay</p>
               <h3 className="mt-16 max-w-xs text-3xl font-semibold tracking-tight">
                 Get paid. Keep the proof.
               </h3>
@@ -243,9 +243,7 @@ export default function Home() {
 
       <footer className="relative border-t border-line">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p className="font-mono">
-            <span className="text-accent">&gt;_</span> proofpay
-          </p>
+          <Logo className="text-foreground" />
           <p>Built for Vibeathon 02 · Night shift · on Base</p>
         </div>
       </footer>

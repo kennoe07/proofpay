@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- ProofPay mark: a receipt with a check. Keep in sync with src/components/logo.tsx. -->
+  <rect width="32" height="32" rx="8" fill="#07090f"/>
+  <path fill="#34d399" d="M10 5.5h12a1.5 1.5 0 0 1 1.5 1.5v19l-2.5-1.6-2.5 1.6-2.5-1.6-2.5 1.6-2.5-1.6L8.5 26V7a1.5 1.5 0 0 1 1.5-1.5Z"/>
+  <path d="m12.5 14 2.5 2.5 4.5-4.5" fill="none" stroke="#04261a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

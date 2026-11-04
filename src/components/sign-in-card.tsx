@@ -50,7 +50,7 @@ export function SignInCard() {
 
   return (
     <div className="mx-auto w-full max-w-md rounded-3xl border border-line bg-surface p-8">
-      <p className="font-mono text-sm text-accent">&gt;_ sign in</p>
+      <p className="text-sm font-medium text-accent">Sign in</p>
       <h1 className="mt-3 text-2xl font-semibold tracking-tight">Sign in with your wallet</h1>
       <p className="mt-2 text-sm leading-6 text-muted">
         Your wallet is your account. Signing in is free: you sign a message, no transaction is sent.
