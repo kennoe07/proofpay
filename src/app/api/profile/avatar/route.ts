@@ -46,7 +46,7 @@ export async function PUT(request: Request) {
 
   const body = (await request.json().catch(() => null)) as { path?: unknown } | null;
   const path = typeof body?.path === "string" ? body.path : "";
-  if (!path.startsWith(`${session.address}/`)) return fail("That image isn't yours.", 400);
+  if (!path.startsWith(`${session.address}/`) || path.includes("..")) return fail("That image isn't yours.", 400);
 
   const storage = supabaseAdmin().storage.from(AVATAR_BUCKET);
   const { data: file, error } = await storage.download(path);

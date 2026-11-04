@@ -12,6 +12,9 @@ export type FormState = { error?: string; fields?: Record<string, string> } | un
 
 const MAX_AMOUNT = parseUnits("1000000", USDC_DECIMALS);
 
+// Handles that could pass for ProofPay staff or partners on a public track record.
+const RESERVED_HANDLE = /^(proofpay|vibestarter|admin|support|help|official|team|staff|base|coinbase)(_.*)?$|proofpay/;
+
 function text(formData: FormData, name: string) {
   const value = formData.get(name);
   return typeof value === "string" ? value.trim() : "";
@@ -24,6 +27,9 @@ export async function setHandle(_prev: FormState, formData: FormData): Promise<F
   const handle = text(formData, "handle").toLowerCase();
   if (!/^[a-z0-9_]{3,24}$/.test(handle)) {
     return { error: "Use 3 to 24 lowercase letters, numbers or underscores.", fields: { handle } };
+  }
+  if (RESERVED_HANDLE.test(handle)) {
+    return { error: "That handle is reserved. Try another.", fields: { handle } };
   }
 
   const { error } = await supabaseAdmin()

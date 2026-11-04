@@ -27,7 +27,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/invoices/[i
 
   if (path) {
     // The file must belong to this invoice; fingerprint exactly what was stored.
-    if (!path.startsWith(`${id}/`)) return Response.json({ error: "That file isn't for this invoice." }, { status: 400 });
+    if (!path.startsWith(`${id}/`) || path.includes("..")) return Response.json({ error: "That file isn't for this invoice." }, { status: 400 });
     const { data: file, error } = await db.storage.from(EVIDENCE_BUCKET).download(path);
     if (error || !file) return Response.json({ error: "Couldn't find the uploaded file." }, { status: 400 });
     const bytes = Buffer.from(await file.arrayBuffer());

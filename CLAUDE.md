@@ -15,10 +15,9 @@ The receipts add up to a public track record the freelancer can show the next cl
   API secrets into chat. Secrets go in `.env.local` (gitignored), which they edit themselves.
 - **Ask before removing anything** (packages, files, features, planned tools), even when a workaround seems
   obvious. Explain the problem and the options, and let the builder decide.
-- Slow internet: `npm install` of the scaffold took ~7 minutes. Batch dependency installs.
-- Windows 10, VS Code, Node 24, npm 11, Git 2.55. No GitHub CLI (`gh`) installed.
+- The builder's machine setup, wallets and past incidents are in `CLAUDE.local.md` (private, not committed).
 
-## Competition facts (deadlines are 22:00 UTC = 23:00 Lagos time)
+## Competition facts (deadlines are 22:00 UTC)
 
 - Build week ends **Mon 9 Nov 2026**. Submit at app.vibestarter.xyz/vibeathon/submit with the wallet used to apply.
 - Required: project name, one-line tagline, live URL to a working app, what it does and what to try,
@@ -57,15 +56,14 @@ phone layouts at 500px width.
 
 Next.js 16 (App Router, `src/` dir) + TypeScript + Tailwind v4 · OnchainKit + wagmi/viem (Coinbase Smart Wallet)
 · Supabase (Postgres + storage for evidence files) · EAS · Sign-In With Ethereum · Vercel hosting.
-Coinbase services (portal.cdp.coinbase.com) time out on the builder's network without a VPN; `sepolia.base.org`
-works directly. Keep the app usable if OnchainKit's API calls fail.
+Keep the app usable if OnchainKit's API calls fail (Coinbase services aren't reachable from every network).
 This Next.js version differs from older training data: read `node_modules/next/dist/docs/` before using an API.
 
 ## Status (Wed 4 Nov 2026)
 
 - Done: scaffolded app, landing page (`src/app/page.tsx`), title in `src/app/layout.tsx`. Lint and build pass.
-  First commit `823f52f` on `main`. Git identity set for this repo only (name "kenno").
-- Pushed to private repo https://github.com/kennoe07/proofpay (`origin`, branch `main`).
+  First commit `823f52f` on `main`.
+- Repo https://github.com/kennoe07/proofpay (`origin`, branch `main`).
 - Builder has Vercel and Supabase accounts (signed up with GitHub). No Supabase project created yet.
 - Live on Vercel at https://proofpay-rho.vercel.app (auto-deploys on push to `main`).
 - Landing page redesigned (dark default, light/dark toggle in `src/components/theme-toggle.tsx`).
@@ -79,12 +77,7 @@ This Next.js version differs from older training data: read `node_modules/next/d
   pulls in `@coinbase/cdp-sdk`, whose optional `@x402/*` peers aren't installed, which breaks SSR builds.
 - Cache Components is on: anything reading cookies, params or the database must sit inside `<Suspense>`.
 - Vercel has all six env vars (Production); `SUPABASE_SECRET_KEY` and `SESSION_SECRET` are type Secret.
-  `SESSION_SECRET` was rotated on 4 Nov after appearing in a screenshot.
 - Builder signed in with a real wallet and created an invoice locally; it works.
-- MetaMask once showed "signs of phishing or wallet-draining" on
-  proofpay-rho.vercel.app. Not on the public eth-phishing-detect list (checked 4 Nov), so it's the live scanner.
-  Options offered: report the false positive, and/or a custom domain. 4 Nov: builder opened the site in another
-  browser and it wasn't flagged, so it's deprioritised (warning appeared on connecting MetaMask, worth a recheck).
 - Pay flow built (4 Nov, not yet pushed): `src/components/pay-panel.tsx` (connect, switch chain, balance,
   USDC `transfer`, wait for receipt, then claim), `POST /api/invoices/[id]/pay` + `src/lib/verify-payment.ts`
   (receipt success, official USDC Transfer log to the freelancer for >= amount, payer != freelancer, block time
@@ -92,8 +85,7 @@ This Next.js version differs from older training data: read `node_modules/next/d
   Verified against a real Base Sepolia transfer: accept, idempotent re-claim, and 5 rejection cases.
 - Known limitation: an ERC-20 transfer can't carry an invoice id, so if a freelancer has two unpaid invoices
   for the same amount, whoever claims a matching transfer first decides which one it pays.
-- 4 Nov: builder paid a real 1 USDC invoice on Base Sepolia from a second wallet (0x9b92…edf8 to
-  0xde27…a483); it was verified and marked paid. Fixed along the way: the pay panel read the app's chain
+- 4 Nov: builder paid a real 1 USDC invoice on Base Sepolia from a second wallet; it was verified and marked paid. Fixed along the way: the pay panel read the app's chain
   (`useChainId`) instead of the wallet's (`useAccount().chainId`), so a wallet on Ethereum got no Switch button;
   payment errors now show the wallet's real message; a no-gas warning links to Base's faucet list.
 - Pay flow live since `5c01d0d`.
@@ -137,8 +129,12 @@ This Next.js version differs from older training data: read `node_modules/next/d
   dashboard address, and `publicName()` (handle, then Basename, then short address) on invoice/profile pages.
   Tested with jesse.base.eth via a temporary profile (deleted). Builder's wallets have no Basename yet.
 - 4 Nov: builder recorded a demo video and tested end to end with a friend (friend invoiced, builder paid).
-- Next: mobile/UX polish,
-  demo video, submission. Open: MetaMask warning, testnet answer on Discord.
+- 4 Nov: security review before making the repo public. No secrets in code, history or browser bundles;
+  public-key writes to tables and both buckets refused. Added security headers (`next.config.ts`: no framing,
+  nosniff, referrer policy), `..` rejected in upload paths, reserved handles (`RESERVED_HANDLE` in
+  `src/app/dashboard/actions.ts`). `npm audit` warnings are all inside wallet libraries; left until after the
+  Vibeathon. README rewritten for judges. Personal notes moved to `CLAUDE.local.md`.
+- Next: mobile/UX polish, submission. Open: testnet answer on Discord.
 - Decided 4 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by
   `receiptsEnabled()` (`src/lib/eas-schema.ts`): Test always, Live only with `NEXT_PUBLIC_LIVE_RECEIPTS=true`
   (set it in Vercel after funding + `register-eas-schema.mjs base`). Before that gating existed, receipts
