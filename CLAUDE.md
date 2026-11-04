@@ -40,6 +40,15 @@ The receipts add up to a public track record the freelancer can show the next cl
 - Out of scope: escrow, disputes, multiple chains, fiat, swaps, AI chat.
 - Keep a short build log of how AI tools were used (for the 10% criterion and the submission form).
 
+## Design
+
+Dark "night shift" theme with one green accent (tokens in `src/app/globals.css`: `background`, `surface`,
+`surface-2`, `line`, `foreground`, `muted`, `accent`, `accent-ink`). Layout inspired by the Folioxa Framer
+template (borrow structure only, never its content or orange branding): floating pill nav, large `rounded-3xl`
+cards, bento grids, small section-label pills, accent pill buttons with an arrow circle. Any sample data shown
+on marketing pages must be labelled "Example". Headless Edge on Windows lays out at ~500px minimum, so check
+phone layouts at 500px width.
+
 ## Stack
 
 Next.js 16 (App Router, `src/` dir) + TypeScript + Tailwind v4 · OnchainKit + wagmi/viem (Coinbase Smart Wallet)
@@ -52,7 +61,10 @@ This Next.js version differs from older training data: read `node_modules/next/d
   First commit `823f52f` on `main`. Git identity set for this repo only (name "kenno").
 - Pushed to private repo https://github.com/kennoe07/proofpay (`origin`, branch `main`).
 - Builder has Vercel and Supabase accounts (signed up with GitHub). No Supabase project created yet.
-- Next: import the repo on Vercel for a live URL. Builder is asking on Discord whether a testnet entry is acceptable.
+- Live on Vercel at https://proofpay-rho.vercel.app (auto-deploys on push to `main`).
+- Landing page redesigned (dark default, light/dark toggle in `src/components/theme-toggle.tsx`).
+- Installed but not yet wired up: `@coinbase/onchainkit`, `wagmi`, `viem`, `@tanstack/react-query`, `@supabase/supabase-js`.
+- Next: wallet sign-in and invoice creation. Builder is asking on Discord whether a testnet entry is acceptable.
 
 ## Plan
 

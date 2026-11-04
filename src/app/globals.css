@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
+/* `light:` utilities apply when the page is in light mode. */
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/* ProofPay is dark-first: a "night shift" palette with one green accent. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #07090f;
+  --surface: #0d111a;
+  --surface-2: #131a27;
+  --line: #1f2838;
+  --foreground: #e8ecf3;
+  --muted: #8b95a8;
+  --accent: #34d399;
+  --accent-ink: #04261a;
+  --grid-line: rgb(255 255 255 / 0.035);
+  color-scheme: dark;
+}
+
+/* Light mode uses a deeper green so accent text stays readable on white. */
+[data-theme="light"] {
+  --background: #f3f5f8;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --line: #dfe4ea;
+  --foreground: #0b0f17;
+  --muted: #5a6475;
+  --accent: #047857;
+  --accent-ink: #ffffff;
+  --grid-line: rgb(11 15 23 / 0.05);
+  color-scheme: light;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Faint grid that fades out below the hero. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+.bg-glow {
+  background: radial-gradient(700px circle at 70% 10%, rgb(52 211 153 / 0.13), transparent 60%);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink {
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .cursor-blink {
+    animation: none;
+  }
 }
