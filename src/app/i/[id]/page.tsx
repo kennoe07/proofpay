@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CopyLink } from "@/components/copy-link";
+import { EvidenceForm } from "@/components/evidence-form";
+import { ReceiptCard } from "@/components/receipt-card";
 import { OwnerTools } from "@/components/owner-tools";
 import { PayPanelLoader } from "@/components/pay-panel-loader";
 import { NetworkBadge, StatusBadge } from "@/components/status-badge";
@@ -143,6 +145,17 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
           </p>
         )}
       </article>
+
+      {invoice.status === "paid" &&
+        (invoice.attestation_uid ? (
+          <ReceiptCard invoice={invoice} />
+        ) : isOwner ? (
+          <EvidenceForm invoiceId={invoice.id} />
+        ) : (
+          <p className="rounded-3xl border border-dashed border-line px-6 py-5 text-center text-sm text-muted">
+            Paid. The freelancer hasn&apos;t added delivery evidence for the onchain receipt yet.
+          </p>
+        ))}
 
       {invoice.status === "unpaid" && network && (
         <>

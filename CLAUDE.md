@@ -102,7 +102,20 @@ This Next.js version differs from older training data: read `node_modules/next/d
   (Copy link, Cancel with confirm, "Paid outside ProofPay?"). Optional due dates with Overdue badge.
   Migrations 002 (due_date, 'cancelled' status) and 003 (paid_has_payment only applies to 'paid') have been run.
   Builder tested Test-mode creation and cancelling locally.
-- Next: evidence upload + EAS receipt, then the public profile `/u/[handle]`.
+- Receipts built (5 Nov, not yet pushed; builder chose "ProofPay's own wallet signs"):
+  signer wallet 0x29190FEfB849BFBf67270D469B8Ad116aC9D7293, key in `.env.local` as `ATTESTER_PRIVATE_KEY`
+  (generated locally, never displayed). Schema in `src/lib/eas-schema.ts`, registered per network with
+  `scripts/register-eas-schema.mjs` (not yet registered: signer has 0 ETH). Public Supabase Storage bucket
+  `evidence` (10 MB limit) created via API. Flow: paid invoice → owner's `EvidenceForm` (file via signed upload
+  URL, or https link) → `POST /api/invoices/[id]/receipt` (SHA-256 of stored file, save evidence, `attestReceipt`
+  in `src/lib/eas.ts`, save `attestation_uid`) → `ReceiptCard` with "Verify on EAS" (base-sepolia.easscan.org).
+- 5 Nov: signer funded; schema registered on Base Sepolia (uid 0x111b…c5c0). Builder created the first receipt
+  locally (invoice ed159899…); read back from EAS: attester, recipient, schema, amount, token, payer, tx and file
+  hash all correct. Its invoiceUrl says localhost (permanent), so receipt links now use `NEXT_PUBLIC_SITE_URL`.
+- Vercel has `ATTESTER_PRIVATE_KEY` (Secret) and `NEXT_PUBLIC_SITE_URL`; receipts pushed live 5 Nov.
+  For Live receipts the signer also needs ETH on Base mainnet and the schema registered there
+  (`node --env-file=.env.local scripts/register-eas-schema.mjs base`).
+- Next: the public profile `/u/[handle]`.
 
 ## Plan
 
