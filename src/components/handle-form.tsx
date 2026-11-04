@@ -1,0 +1,45 @@
+"use client";
+
+import { useActionState } from "react";
+import { setHandle } from "@/app/dashboard/actions";
+
+export function HandleForm() {
+  const [state, action, pending] = useActionState(setHandle, undefined);
+
+  return (
+    <form action={action} className="rounded-3xl border border-accent/40 bg-accent/5 p-6">
+      <label htmlFor="handle" className="font-medium">
+        Choose your public handle
+      </label>
+      <p className="mt-1 text-sm text-muted">
+        Your track record will live at <span className="font-mono">/u/your_handle</span>.
+      </p>
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+        <input
+          id="handle"
+          name="handle"
+          required
+          minLength={3}
+          maxLength={24}
+          pattern="[a-zA-Z0-9_]{3,24}"
+          defaultValue={state?.fields?.handle}
+          placeholder="ada_designs"
+          autoComplete="off"
+          className="flex-1 rounded-full border border-line bg-surface px-5 py-3 font-mono text-sm outline-none focus:border-accent"
+        />
+        <button
+          type="submit"
+          disabled={pending}
+          className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition hover:brightness-110 disabled:opacity-60"
+        >
+          {pending ? "Saving…" : "Save handle"}
+        </button>
+      </div>
+      {state?.error && (
+        <p role="alert" className="mt-3 text-sm text-red-500">
+          {state.error}
+        </p>
+      )}
+    </form>
+  );
+}

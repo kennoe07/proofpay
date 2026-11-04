@@ -13,6 +13,8 @@ The receipts add up to a public track record the freelancer can show the next cl
   Claude writes the code; explain each step in plain language and say what the builder needs to do by hand.
 - Signs in to services themselves. Never ask them to paste private keys, seed phrases, passwords or
   API secrets into chat. Secrets go in `.env.local` (gitignored), which they edit themselves.
+- **Ask before removing anything** (packages, files, features, planned tools), even when a workaround seems
+  obvious. Explain the problem and the options, and let the builder decide.
 - Slow internet: `npm install` of the scaffold took ~7 minutes. Batch dependency installs.
 - Windows 10, VS Code, Node 24, npm 11, Git 2.55. No GitHub CLI (`gh`) installed.
 
@@ -38,6 +40,8 @@ The receipts add up to a public track record the freelancer can show the next cl
 - **Default to Base Sepolia** with Circle faucet test USDC so judges can try it free; keep the network configurable.
   Still to confirm on Discord whether a testnet entry is acceptable.
 - Out of scope: escrow, disputes, multiple chains, fiat, swaps, AI chat.
+- USDC only for the Vibeathon. After it: support more stablecoins (e.g. USDT) via a per-invoice token field.
+  Good material for the "path from MVP to product" part of the submission.
 - Keep a short build log of how AI tools were used (for the 10% criterion and the submission form).
 
 ## Design
@@ -52,7 +56,9 @@ phone layouts at 500px width.
 ## Stack
 
 Next.js 16 (App Router, `src/` dir) + TypeScript + Tailwind v4 · OnchainKit + wagmi/viem (Coinbase Smart Wallet)
-· Supabase (Postgres + storage for evidence files) · EAS SDK · Sign-In With Ethereum · Vercel hosting.
+· Supabase (Postgres + storage for evidence files) · EAS · Sign-In With Ethereum · Vercel hosting.
+Coinbase services (portal.cdp.coinbase.com) time out on the builder's network without a VPN; `sepolia.base.org`
+works directly. Keep the app usable if OnchainKit's API calls fail.
 This Next.js version differs from older training data: read `node_modules/next/dist/docs/` before using an API.
 
 ## Status (Wed 4 Nov 2026)
@@ -63,8 +69,17 @@ This Next.js version differs from older training data: read `node_modules/next/d
 - Builder has Vercel and Supabase accounts (signed up with GitHub). No Supabase project created yet.
 - Live on Vercel at https://proofpay-rho.vercel.app (auto-deploys on push to `main`).
 - Landing page redesigned (dark default, light/dark toggle in `src/components/theme-toggle.tsx`).
-- Installed but not yet wired up: `@coinbase/onchainkit`, `wagmi`, `viem`, `@tanstack/react-query`, `@supabase/supabase-js`.
-- Next: wallet sign-in and invoice creation. Builder is asking on Discord whether a testnet entry is acceptable.
+- Supabase project `bgsswdarznmpgcdfduzr` (Frankfurt). `supabase/schema.sql` has been run: `profiles` and
+  `invoices` exist, public reads work, and writes with the publishable key are refused (RLS). Keys are in `.env.local`.
+- Built (Thu 5 Nov, not yet pushed): Sign-In With Ethereum (`/api/auth/nonce`, `/api/auth/verify`, signed
+  httpOnly session cookie in `src/lib/session.ts`), `/dashboard` (handle setup, invoice list, stats),
+  `/dashboard/new` (server action `createInvoice`), public invoice page `/i/[id]`.
+  Tested with a throwaway wallet: valid sign-in works; forged signatures and reused nonces are rejected.
+- Wallet code is browser-only (`src/components/wallet-sign-in.tsx`, `ssr: false`): `@base-org/account`'s Node build
+  pulls in `@coinbase/cdp-sdk`, whose optional `@x402/*` peers aren't installed, which breaks SSR builds.
+- Cache Components is on: anything reading cookies, params or the database must sit inside `<Suspense>`.
+- Vercel needs the `.env.local` values added as environment variables before this is pushed.
+- Next: builder tests sign-in with a real wallet; then the pay flow on `/i/[id]`.
 
 ## Plan
 

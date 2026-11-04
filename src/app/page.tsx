@@ -94,7 +94,7 @@ export default function Home() {
             </a>
             <ThemeToggle />
             <a
-              href="#how"
+              href="/dashboard"
               className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:opacity-85"
             >
               Get started
@@ -220,7 +220,7 @@ export default function Home() {
               something they can&apos;t: a payment anyone can check.
             </p>
             <div className="mt-8">
-              <ArrowButton href="#how">Get started</ArrowButton>
+              <ArrowButton href="/dashboard">Get started</ArrowButton>
             </div>
           </div>
 
