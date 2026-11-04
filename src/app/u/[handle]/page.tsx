@@ -4,17 +4,18 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Avatar } from "@/components/avatar";
 import { CopyLink } from "@/components/copy-link";
+import { WalletName } from "@/components/wallet-name";
 import { NetworkBadge } from "@/components/status-badge";
 import { isTestnetChain } from "@/lib/chain";
 import { easscanUrl } from "@/lib/eas-schema";
-import { formatDate, formatUsdc, shortAddress } from "@/lib/format";
-import { displayName, getTrackRecord, trackRecordStats } from "@/lib/track-record";
+import { formatDate, formatUsdc } from "@/lib/format";
+import { getTrackRecord, publicName, trackRecordStats } from "@/lib/track-record";
 
 export async function generateMetadata(props: PageProps<"/u/[handle]">): Promise<Metadata> {
   const { handle } = await props.params;
   const found = await getTrackRecord(handle);
   if (!found) return { title: "Profile not found · ProofPay" };
-  const name = displayName(found.profile);
+  const name = await publicName(found.profile);
   return {
     title: `${name} · Track record · ProofPay`,
     description: `${name}'s verified work history: ${found.jobs.length} paid job${found.jobs.length === 1 ? "" : "s"}, checked on Base.`,
@@ -36,7 +37,7 @@ async function TrackRecord({ params }: Pick<PageProps<"/u/[handle]">, "params">)
   if (!found) notFound();
 
   const { profile, jobs } = found;
-  const name = displayName(profile);
+  const name = await publicName(profile);
   const path = `/u/${profile.handle ?? profile.wallet_address}`;
 
   const { earned, earnedTest, receipts } = trackRecordStats(jobs);
@@ -50,7 +51,7 @@ async function TrackRecord({ params }: Pick<PageProps<"/u/[handle]">, "params">)
             <p className="font-mono text-xs tracking-widest text-muted">TRACK RECORD</p>
             <h1 className="mt-1 truncate text-2xl font-semibold tracking-tight">{name}</h1>
             <p className="truncate font-mono text-sm text-muted">
-              {shortAddress(profile.wallet_address)} · on ProofPay since {formatDate(profile.created_at)}
+              <WalletName address={profile.wallet_address} /> · on ProofPay since {formatDate(profile.created_at)}
             </p>
           </div>
         </div>

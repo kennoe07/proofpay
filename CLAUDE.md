@@ -132,6 +132,11 @@ This Next.js version differs from older training data: read `node_modules/next/d
   `metadataBase` from `NEXT_PUBLIC_SITE_URL`), branded `src/app/not-found.tsx`, dashboard "Add evidence" nudge,
   handle editing (`HandleEditor`, keyed by handle). Landing features `FEATURED_HANDLE = "0xknight"`: update it if
   the builder changes handle.
+- Basenames (live 4 Nov): `src/lib/basename.ts` (Base mainnet L2 resolver reverse lookup + forward
+  check, `"use cache"` hours, null on failure), `WalletName` component; used for invoice "Pays to"/payer, the
+  dashboard address, and `publicName()` (handle, then Basename, then short address) on invoice/profile pages.
+  Tested with jesse.base.eth via a temporary profile (deleted). Builder's wallets have no Basename yet.
+- 4 Nov: builder recorded a demo video and tested end to end with a friend (friend invoiced, builder paid).
 - Next: mobile/UX polish,
   demo video, submission. Open: MetaMask warning, testnet answer on Discord.
 - Decided 4 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by

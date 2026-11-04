@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { CopyLink } from "@/components/copy-link";
 import { EvidenceForm } from "@/components/evidence-form";
 import { ReceiptCard } from "@/components/receipt-card";
+import { WalletName } from "@/components/wallet-name";
 import { OwnerTools } from "@/components/owner-tools";
 import { PayPanelLoader } from "@/components/pay-panel-loader";
 import { NetworkBadge, StatusBadge } from "@/components/status-badge";
@@ -13,6 +14,7 @@ import { explorerTxUrl, getChain, isTestnetChain } from "@/lib/chain";
 import { receiptsEnabled } from "@/lib/eas-schema";
 import { formatDate, formatUsdc, isOverdue, shortAddress } from "@/lib/format";
 import { getSession } from "@/lib/session";
+import { publicName } from "@/lib/track-record";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -55,7 +57,7 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
   if (!found) notFound();
 
   const { invoice, profile } = found;
-  const from = profile?.handle ? `@${profile.handle}` : shortAddress(invoice.freelancer_address);
+  const from = await publicName({ handle: profile?.handle ?? null, wallet_address: invoice.freelancer_address });
   const session = await getSession();
   const isOwner = session?.address === invoice.freelancer_address;
   const network = getChain(invoice.chain_id);
@@ -110,7 +112,9 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
         <dl className="mt-6 divide-y divide-line rounded-2xl border border-line text-sm">
           <div className="flex items-center justify-between gap-4 px-4 py-3">
             <dt className="text-muted">Pays to</dt>
-            <dd className="font-mono">{shortAddress(invoice.freelancer_address)}</dd>
+            <dd>
+              <WalletName address={invoice.freelancer_address} />
+            </dd>
           </div>
           {invoice.due_date && (
             <div className="flex items-center justify-between gap-4 px-4 py-3">
@@ -127,7 +131,10 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
               <dd>
                 {formatDate(invoice.paid_at)}
                 {invoice.payer_address && (
-                  <span className="text-muted"> · from {shortAddress(invoice.payer_address)}</span>
+                  <span className="text-muted">
+                    {" "}
+                    · from <WalletName address={invoice.payer_address} />
+                  </span>
                 )}
               </dd>
             </div>

@@ -4,11 +4,12 @@ import { Suspense } from "react";
 import { AvatarUploader } from "@/components/avatar-uploader";
 import { HandleEditor } from "@/components/handle-editor";
 import { HandleForm } from "@/components/handle-form";
+import { WalletName } from "@/components/wallet-name";
 import { WalletSignIn } from "@/components/wallet-sign-in";
 import { NetworkBadge, StatusBadge } from "@/components/status-badge";
 import { isTestnetChain } from "@/lib/chain";
 import { receiptsEnabled } from "@/lib/eas-schema";
-import { formatDate, formatUsdc, isOverdue, shortAddress } from "@/lib/format";
+import { formatDate, formatUsdc, isOverdue } from "@/lib/format";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
 import { signOut } from "./actions";
@@ -69,7 +70,9 @@ async function Dashboard() {
           {profile?.handle ? (
             <HandleEditor key={profile.handle} handle={profile.handle} />
           ) : (
-            <p className="font-mono text-sm text-accent">{shortAddress(session.address)}</p>
+            <p className="text-sm text-accent">
+              <WalletName address={session.address} />
+            </p>
           )}
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Your invoices</h1>
         </div>

@@ -1,4 +1,5 @@
 import "server-only";
+import { getBasename } from "@/lib/basename";
 import { isTestnetChain } from "@/lib/chain";
 import { shortAddress } from "@/lib/format";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
@@ -35,6 +36,12 @@ export async function getTrackRecord(param: string) {
 
 export function displayName(profile: Profile) {
   return profile.handle ? `@${profile.handle}` : shortAddress(profile.wallet_address);
+}
+
+// Like displayName, but falls back to the wallet's Basename before its short address.
+export async function publicName(profile: Pick<Profile, "handle" | "wallet_address">) {
+  if (profile.handle) return `@${profile.handle}`;
+  return (await getBasename(profile.wallet_address)) ?? shortAddress(profile.wallet_address);
 }
 
 // Live earnings only count Live invoices; Test mode is reported separately.
