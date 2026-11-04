@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ClaimPaymentForm } from "@/components/claim-payment-form";
 import { CopyLink } from "@/components/copy-link";
+import { PayPanelLoader } from "@/components/pay-panel-loader";
 import { StatusBadge } from "@/components/status-badge";
 import { chain, explorerTxUrl, isTestnet } from "@/lib/chain";
 import { formatDate, formatUsdc, shortAddress } from "@/lib/format";
+import { getSession } from "@/lib/session";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -48,6 +51,8 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
 
   const { invoice, profile } = found;
   const from = profile?.handle ? `@${profile.handle}` : shortAddress(invoice.freelancer_address);
+  const session = await getSession();
+  const isOwner = session?.address === invoice.freelancer_address;
 
   return (
     <div className="space-y-6">
@@ -89,6 +94,17 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
             <dt className="text-muted">Pays to</dt>
             <dd className="font-mono">{shortAddress(invoice.freelancer_address)}</dd>
           </div>
+          {invoice.paid_at && (
+            <div className="flex items-center justify-between gap-4 px-4 py-3">
+              <dt className="text-muted">Paid</dt>
+              <dd>
+                {formatDate(invoice.paid_at)}
+                {invoice.payer_address && (
+                  <span className="text-muted"> · from {shortAddress(invoice.payer_address)}</span>
+                )}
+              </dd>
+            </div>
+          )}
           {invoice.payment_tx_hash && (
             <div className="flex items-center justify-between gap-4 px-4 py-3">
               <dt className="text-muted">Payment tx</dt>
@@ -105,13 +121,19 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
             </div>
           )}
         </dl>
-
-        {invoice.status === "unpaid" && (
-          <p className="mt-6 rounded-2xl bg-surface-2 px-4 py-3 text-sm text-muted">
-            Paying from this page is coming in the next update.
-          </p>
-        )}
       </article>
+
+      {invoice.status === "unpaid" && (
+        <>
+          {/* Everyone sees what the client sees; the panel refuses payment from the invoice's own wallet. */}
+          <PayPanelLoader
+            invoiceId={invoice.id}
+            amountUnits={String(invoice.amount_units)}
+            payTo={invoice.freelancer_address}
+          />
+          {isOwner && <ClaimPaymentForm invoiceId={invoice.id} />}
+        </>
+      )}
 
       {isTestnet && (
         <p className="text-center text-xs text-muted">

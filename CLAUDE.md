@@ -71,15 +71,31 @@ This Next.js version differs from older training data: read `node_modules/next/d
 - Landing page redesigned (dark default, light/dark toggle in `src/components/theme-toggle.tsx`).
 - Supabase project `bgsswdarznmpgcdfduzr` (Frankfurt). `supabase/schema.sql` has been run: `profiles` and
   `invoices` exist, public reads work, and writes with the publishable key are refused (RLS). Keys are in `.env.local`.
-- Built (Thu 5 Nov, not yet pushed): Sign-In With Ethereum (`/api/auth/nonce`, `/api/auth/verify`, signed
+- Live since Thu 5 Nov (`329a95d`): Sign-In With Ethereum (`/api/auth/nonce`, `/api/auth/verify`, signed
   httpOnly session cookie in `src/lib/session.ts`), `/dashboard` (handle setup, invoice list, stats),
   `/dashboard/new` (server action `createInvoice`), public invoice page `/i/[id]`.
   Tested with a throwaway wallet: valid sign-in works; forged signatures and reused nonces are rejected.
 - Wallet code is browser-only (`src/components/wallet-sign-in.tsx`, `ssr: false`): `@base-org/account`'s Node build
   pulls in `@coinbase/cdp-sdk`, whose optional `@x402/*` peers aren't installed, which breaks SSR builds.
 - Cache Components is on: anything reading cookies, params or the database must sit inside `<Suspense>`.
-- Vercel needs the `.env.local` values added as environment variables before this is pushed.
-- Next: builder tests sign-in with a real wallet; then the pay flow on `/i/[id]`.
+- Vercel has all six env vars (Production); `SUPABASE_SECRET_KEY` and `SESSION_SECRET` are type Secret.
+  `SESSION_SECRET` was rotated on 5 Nov after appearing in a screenshot.
+- Builder signed in with a real wallet and created an invoice locally; it works.
+- OPEN ISSUE (before submission): MetaMask shows "signs of phishing or wallet-draining" on
+  proofpay-rho.vercel.app. Not on the public eth-phishing-detect list (checked 5 Nov), so it's the live scanner.
+  Options offered: report the false positive, and/or a custom domain. Builder chose to keep testing for now.
+- Pay flow built (5 Nov, not yet pushed): `src/components/pay-panel.tsx` (connect, switch chain, balance,
+  USDC `transfer`, wait for receipt, then claim), `POST /api/invoices/[id]/pay` + `src/lib/verify-payment.ts`
+  (receipt success, official USDC Transfer log to the freelancer for >= amount, payer != freelancer, block time
+  >= invoice created_at, tx hash unique; update only if still unpaid). Owner-only "Paid outside ProofPay?" form.
+  Verified against a real Base Sepolia transfer: accept, idempotent re-claim, and 5 rejection cases.
+- Known limitation: an ERC-20 transfer can't carry an invoice id, so if a freelancer has two unpaid invoices
+  for the same amount, whoever claims a matching transfer first decides which one it pays.
+- 5 Nov: builder paid a real 1 USDC invoice on Base Sepolia from a second wallet (0x9b92…edf8 to
+  0xde27…a483); it was verified and marked paid. Fixed along the way: the pay panel read the app's chain
+  (`useChainId`) instead of the wallet's (`useAccount().chainId`), so a wallet on Ethereum got no Switch button;
+  payment errors now show the wallet's real message; a no-gas warning links to Base's faucet list.
+- Next: evidence upload + EAS receipt, then the public profile `/u/[handle]`.
 
 ## Plan
 
