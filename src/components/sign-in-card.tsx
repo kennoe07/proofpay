@@ -5,7 +5,7 @@ import { useState } from "react";
 import { createSiweMessage } from "viem/siwe";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { WalletPicker } from "@/components/wallet-picker";
-import { chain, isTestnet } from "@/lib/chain";
+import { chain } from "@/lib/chain";
 import { shortAddress } from "@/lib/format";
 
 export function SignInCard() {
@@ -92,11 +92,10 @@ export function SignInCard() {
         </p>
       )}
 
-      {isTestnet && (
-        <p className="mt-6 text-xs leading-5 text-muted">
-          ProofPay is running on {chain.name}, a test network. Nothing here uses real money.
-        </p>
-      )}
+      <p className="mt-6 text-xs leading-5 text-muted">
+        Each invoice runs in Test mode (Base Sepolia, free test USDC) or Live (Base, real USDC). You choose
+        when you create it.
+      </p>
     </div>
   );
 }
