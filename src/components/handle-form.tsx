@@ -3,16 +3,26 @@
 import { useActionState } from "react";
 import { setHandle } from "@/app/dashboard/actions";
 
-export function HandleForm() {
+// Choosing a handle for the first time, or changing it (`current` set).
+export function HandleForm({ current, onCancel }: { current?: string; onCancel?: () => void }) {
   const [state, action, pending] = useActionState(setHandle, undefined);
 
   return (
     <form action={action} className="rounded-3xl border border-accent/40 bg-accent/5 p-6">
       <label htmlFor="handle" className="font-medium">
-        Choose your public handle
+        {current ? "Change your public handle" : "Choose your public handle"}
       </label>
       <p className="mt-1 text-sm text-muted">
-        Your track record will live at <span className="font-mono">/u/your_handle</span>.
+        {current ? (
+          <>
+            Your profile link will change, and old <span className="font-mono">/u/{current}</span> links will
+            stop working. Invoice links aren&apos;t affected.
+          </>
+        ) : (
+          <>
+            Your track record will live at <span className="font-mono">/u/your_handle</span>.
+          </>
+        )}
       </p>
       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
         <input
@@ -22,11 +32,20 @@ export function HandleForm() {
           minLength={3}
           maxLength={24}
           pattern="[a-zA-Z0-9_]{3,24}"
-          defaultValue={state?.fields?.handle}
+          defaultValue={state?.fields?.handle ?? current}
           placeholder="ada_designs"
           autoComplete="off"
           className="flex-1 rounded-full border border-line bg-surface px-5 py-3 font-mono text-sm outline-none focus:border-accent"
         />
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-full px-5 py-3 text-sm text-muted transition-colors hover:text-foreground"
+          >
+            Cancel
+          </button>
+        )}
         <button
           type="submit"
           disabled={pending}

@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AvatarUploader } from "@/components/avatar-uploader";
+import { HandleEditor } from "@/components/handle-editor";
 import { HandleForm } from "@/components/handle-form";
 import { WalletSignIn } from "@/components/wallet-sign-in";
 import { NetworkBadge, StatusBadge } from "@/components/status-badge";
 import { isTestnetChain } from "@/lib/chain";
+import { receiptsEnabled } from "@/lib/eas-schema";
 import { formatDate, formatUsdc, isOverdue, shortAddress } from "@/lib/format";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
@@ -56,14 +58,19 @@ async function Dashboard() {
   const total = (list: Invoice[]) => list.reduce((sum, i) => sum + BigInt(i.amount_units), BigInt(0));
   const earned = total(paid.filter((i) => !isTestnetChain(i.chain_id)));
   const earnedTest = total(paid.filter((i) => isTestnetChain(i.chain_id)));
+  // Paid jobs that could get an onchain receipt but don't have one yet.
+  const needsEvidence = (i: Invoice) => i.status === "paid" && !i.attestation_uid && receiptsEnabled(i.chain_id);
+  const awaitingEvidence = paid.filter(needsEvidence);
 
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="font-mono text-sm text-accent">
-            {profile?.handle ? `@${profile.handle}` : shortAddress(session.address)}
-          </p>
+          {profile?.handle ? (
+            <HandleEditor key={profile.handle} handle={profile.handle} />
+          ) : (
+            <p className="font-mono text-sm text-accent">{shortAddress(session.address)}</p>
+          )}
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Your invoices</h1>
         </div>
         <div className="flex items-center gap-3">
@@ -106,6 +113,22 @@ async function Dashboard() {
         />
       </div>
 
+      {awaitingEvidence.length > 0 && (
+        <Link
+          href={`/i/${awaitingEvidence[0].id}`}
+          className="flex items-center justify-between gap-4 rounded-3xl border border-amber-500/40 bg-amber-500/5 px-6 py-4 text-sm transition-colors hover:bg-amber-500/10"
+        >
+          <span>
+            <span className="font-medium">
+              {awaitingEvidence.length} paid invoice{awaitingEvidence.length === 1 ? " is" : "s are"} waiting for
+              delivery evidence.
+            </span>{" "}
+            <span className="text-muted">Add it to get an onchain receipt for your track record.</span>
+          </span>
+          <span className="shrink-0 font-medium text-amber-600 light:text-amber-700">Add evidence →</span>
+        </Link>
+      )}
+
       {invoices && invoices.length > 0 ? (
         <ul className="divide-y divide-line overflow-hidden rounded-3xl border border-line bg-surface">
           {invoices.map((invoice) => (
@@ -122,6 +145,11 @@ async function Dashboard() {
                   </p>
                 </div>
                 {isTestnetChain(invoice.chain_id) && <NetworkBadge testnet />}
+                {needsEvidence(invoice) && (
+                  <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-600 light:text-amber-700">
+                    Add evidence
+                  </span>
+                )}
                 <StatusBadge status={invoice.status} overdue={isOverdue(invoice)} />
                 <p className="w-28 text-right font-mono text-sm">{formatUsdc(invoice.amount_units)}</p>
               </Link>

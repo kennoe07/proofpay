@@ -81,9 +81,10 @@ This Next.js version differs from older training data: read `node_modules/next/d
 - Vercel has all six env vars (Production); `SUPABASE_SECRET_KEY` and `SESSION_SECRET` are type Secret.
   `SESSION_SECRET` was rotated on 5 Nov after appearing in a screenshot.
 - Builder signed in with a real wallet and created an invoice locally; it works.
-- OPEN ISSUE (before submission): MetaMask shows "signs of phishing or wallet-draining" on
+- MetaMask once showed "signs of phishing or wallet-draining" on
   proofpay-rho.vercel.app. Not on the public eth-phishing-detect list (checked 5 Nov), so it's the live scanner.
-  Options offered: report the false positive, and/or a custom domain. Builder chose to keep testing for now.
+  Options offered: report the false positive, and/or a custom domain. 5 Nov: builder opened the site in another
+  browser and it wasn't flagged, so it's deprioritised (warning appeared on connecting MetaMask, worth a recheck).
 - Pay flow built (5 Nov, not yet pushed): `src/components/pay-panel.tsx` (connect, switch chain, balance,
   USDC `transfer`, wait for receipt, then claim), `POST /api/invoices/[id]/pay` + `src/lib/verify-payment.ts`
   (receipt success, official USDC Transfer log to the freelancer for >= amount, payer != freelancer, block time
@@ -127,9 +128,15 @@ This Next.js version differs from older training data: read `node_modules/next/d
 - Landing page (live 5 Nov): the Track record bento card is now `FeaturedTrackRecord` (real @0xknight
   data, `"use cache"` + `cacheLife("minutes")`, falls back to `TrackRecordPreview`); `FEATURED_HANDLE` in
   `src/app/page.tsx`. Track record lookups shared via `src/lib/track-record.ts`. Hero receipt stays an Example.
+- Live 5 Nov: link previews (`opengraph-image.tsx` for home, `/i/[id]`, `/u/[handle]`;
+  `metadataBase` from `NEXT_PUBLIC_SITE_URL`), branded `src/app/not-found.tsx`, dashboard "Add evidence" nudge,
+  handle editing (`HandleEditor`, keyed by handle). Landing features `FEATURED_HANDLE = "0xknight"`: update it if
+  the builder changes handle.
 - Next: mobile/UX polish,
   demo video, submission. Open: MetaMask warning, testnet answer on Discord.
-- Decided 5 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Until funded, receipts
+- Decided 5 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by
+  `receiptsEnabled()` (`src/lib/eas-schema.ts`): Test always, Live only with `NEXT_PUBLIC_LIVE_RECEIPTS=true`
+  (set it in Vercel after funding + `register-eas-schema.mjs base`). Before that gating existed, receipts
   on Live invoices fail with "the onchain receipt couldn't be written". Landing "Checked, not claimed" tile lists
   the five payment checks (keep in sync with `src/lib/verify-payment.ts`).
 

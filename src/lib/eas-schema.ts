@@ -17,6 +17,13 @@ export const RECEIPT_SCHEMA_UID = keccak256(
 export const EAS_ADDRESS = "0x4200000000000000000000000000000000000021";
 export const SCHEMA_REGISTRY_ADDRESS = "0x4200000000000000000000000000000000000020";
 
+// Receipts need the signer funded and the schema registered on that network. Test mode always
+// has them; Live (Base mainnet) is switched on with NEXT_PUBLIC_LIVE_RECEIPTS=true once ready.
+export function receiptsEnabled(chainId: number) {
+  if (chainId === baseSepolia.id) return true;
+  return chainId === base.id && process.env.NEXT_PUBLIC_LIVE_RECEIPTS === "true";
+}
+
 export function easscanUrl(chainId: number, uid: string) {
   const host = chainId === base.id ? "base.easscan.org" : chainId === baseSepolia.id ? "base-sepolia.easscan.org" : null;
   return host ? `https://${host}/attestation/view/${uid}` : null;

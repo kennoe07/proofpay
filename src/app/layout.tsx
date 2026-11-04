@@ -13,6 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Lets link previews (Open Graph images) use absolute URLs.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "ProofPay",
   description: "A verifiable record of paid work, on Base.",
 };

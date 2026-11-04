@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { Hex } from "viem";
 import { attestReceipt } from "@/lib/eas";
+import { receiptsEnabled } from "@/lib/eas-schema";
 import { EVIDENCE_BUCKET, MAX_EVIDENCE_BYTES } from "@/lib/evidence";
 import { ownedPaidInvoice } from "@/lib/invoice-access";
 import { supabaseAdmin } from "@/lib/supabase-server";
@@ -12,6 +13,9 @@ export async function POST(request: Request, ctx: RouteContext<"/api/invoices/[i
   const access = await ownedPaidInvoice(id);
   if (access.error) return access.error;
   const { invoice } = access;
+  if (!receiptsEnabled(invoice.chain_id)) {
+    return Response.json({ error: "Onchain receipts are available in Test mode for now." }, { status: 409 });
+  }
 
   const body = (await request.json().catch(() => null)) as { path?: unknown; link?: unknown } | null;
   const path = typeof body?.path === "string" ? body.path : "";

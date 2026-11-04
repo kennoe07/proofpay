@@ -10,6 +10,7 @@ import { OwnerTools } from "@/components/owner-tools";
 import { PayPanelLoader } from "@/components/pay-panel-loader";
 import { NetworkBadge, StatusBadge } from "@/components/status-badge";
 import { explorerTxUrl, getChain, isTestnetChain } from "@/lib/chain";
+import { receiptsEnabled } from "@/lib/eas-schema";
 import { formatDate, formatUsdc, isOverdue, shortAddress } from "@/lib/format";
 import { getSession } from "@/lib/session";
 import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
@@ -158,6 +159,11 @@ async function InvoiceView({ params, searchParams }: Pick<PageProps<"/i/[id]">, 
       {invoice.status === "paid" &&
         (invoice.attestation_uid ? (
           <ReceiptCard invoice={invoice} />
+        ) : !receiptsEnabled(invoice.chain_id) ? (
+          <p className="rounded-3xl border border-dashed border-line px-6 py-5 text-center text-sm text-muted">
+            Paid and verified on Base. Onchain receipts are available in Test mode for now, and coming soon for
+            Live invoices.
+          </p>
         ) : isOwner ? (
           <EvidenceForm invoiceId={invoice.id} />
         ) : (
