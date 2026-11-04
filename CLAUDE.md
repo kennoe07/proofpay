@@ -124,7 +124,10 @@ This Next.js version differs from older training data: read `node_modules/next/d
   `globals.css` at the builder's request. Profile pictures: `profiles.avatar_url` (migration 004, run
   5 Nov), public `avatars` bucket (2 MB, png/jpeg/webp/gif only, created via API), `/api/profile/avatar`
   POST/PUT/DELETE, `AvatarUploader` on the dashboard, `Avatar` on the profile and invoice pages.
-- Next: replace the landing page's "Example" track record with a link to a real one, mobile/UX polish,
+- Landing page (live 5 Nov): the Track record bento card is now `FeaturedTrackRecord` (real @0xknight
+  data, `"use cache"` + `cacheLife("minutes")`, falls back to `TrackRecordPreview`); `FEATURED_HANDLE` in
+  `src/app/page.tsx`. Track record lookups shared via `src/lib/track-record.ts`. Hero receipt stays an Example.
+- Next: mobile/UX polish,
   demo video, submission. Open: MetaMask warning, testnet answer on Discord, mainnet funding for Live receipts.
 
 ## Plan

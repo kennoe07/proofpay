@@ -8,40 +8,11 @@ import { NetworkBadge } from "@/components/status-badge";
 import { isTestnetChain } from "@/lib/chain";
 import { easscanUrl } from "@/lib/eas-schema";
 import { formatDate, formatUsdc, shortAddress } from "@/lib/format";
-import { supabaseAdmin, type Invoice, type Profile } from "@/lib/supabase-server";
-
-const HANDLE = /^[a-z0-9_]{3,24}$/;
-const ADDRESS = /^0x[0-9a-f]{40}$/;
-
-// A track record can be looked up by handle (/u/ada) or by wallet (/u/0x…).
-async function loadProfile(param: string) {
-  const key = decodeURIComponent(param).toLowerCase().replace(/^@/, "");
-  const column = ADDRESS.test(key) ? "wallet_address" : HANDLE.test(key) ? "handle" : null;
-  if (!column) return null;
-
-  const db = supabaseAdmin();
-  const { data: profile } = await db.from("profiles").select("*").eq(column, key).maybeSingle<Profile>();
-  if (!profile) return null;
-
-  // Only paid jobs make up the track record. Client names stay off this public list.
-  const { data: jobs } = await db
-    .from("invoices")
-    .select("id, chain_id, title, amount_units, paid_at, attestation_uid, status")
-    .eq("freelancer_address", profile.wallet_address)
-    .eq("status", "paid")
-    .order("paid_at", { ascending: false })
-    .returns<Pick<Invoice, "id" | "chain_id" | "title" | "amount_units" | "paid_at" | "attestation_uid" | "status">[]>();
-
-  return { profile, jobs: jobs ?? [] };
-}
-
-function displayName(profile: Profile) {
-  return profile.handle ? `@${profile.handle}` : shortAddress(profile.wallet_address);
-}
+import { displayName, getTrackRecord, trackRecordStats } from "@/lib/track-record";
 
 export async function generateMetadata(props: PageProps<"/u/[handle]">): Promise<Metadata> {
   const { handle } = await props.params;
-  const found = await loadProfile(handle);
+  const found = await getTrackRecord(handle);
   if (!found) return { title: "Profile not found · ProofPay" };
   const name = displayName(found.profile);
   return {
@@ -61,19 +32,14 @@ export default function ProfilePage(props: PageProps<"/u/[handle]">) {
 
 async function TrackRecord({ params }: Pick<PageProps<"/u/[handle]">, "params">) {
   const { handle } = await params;
-  const found = await loadProfile(handle);
+  const found = await getTrackRecord(handle);
   if (!found) notFound();
 
   const { profile, jobs } = found;
   const name = displayName(profile);
   const path = `/u/${profile.handle ?? profile.wallet_address}`;
 
-  const live = jobs.filter((j) => !isTestnetChain(j.chain_id));
-  const test = jobs.filter((j) => isTestnetChain(j.chain_id));
-  const total = (list: typeof jobs) => list.reduce((sum, j) => sum + BigInt(j.amount_units), BigInt(0));
-  const earned = total(live);
-  const earnedTest = total(test);
-  const receipts = jobs.filter((j) => j.attestation_uid).length;
+  const { earned, earnedTest, receipts } = trackRecordStats(jobs);
 
   return (
     <div className="space-y-6">

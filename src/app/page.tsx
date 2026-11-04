@@ -1,7 +1,10 @@
 import { Logo } from "@/components/logo";
 import { ReceiptPreview } from "@/components/receipt-preview";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { TrackRecordPreview } from "@/components/track-record-preview";
+import { FeaturedTrackRecord } from "@/components/featured-track-record";
+
+// The real track record shown on the landing page.
+const FEATURED_HANDLE = "0xknight";
 
 const builtWith = ["Base", "USDC", "Ethereum Attestation Service", "Coinbase Smart Wallet"];
 
@@ -203,7 +206,7 @@ export default function Home() {
             </div>
 
             <div className="md:col-span-4">
-              <TrackRecordPreview />
+              <FeaturedTrackRecord handle={FEATURED_HANDLE} />
             </div>
           </div>
         </section>
