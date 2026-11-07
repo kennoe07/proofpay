@@ -10,23 +10,22 @@ freelancers using ProofPay will reorder it.
 - Payment from the invoice page, verified on Base: official USDC, right wallet, enough, after the invoice, never reused
 - Delivery evidence (file fingerprint or link) and an EAS receipt signed by ProofPay
 - Public track record at `/u/<handle>`, due dates, cancelling, profile pictures, Basenames
+- Live receipts on Base mainnet: the first real-money receipt was written on 7 Nov 2026
 
 ## Next: making it real (first weeks)
 
-1. **Live receipts on Base mainnet.** Payments on Live invoices are already verified; receipts switch on once
-   ProofPay's signing wallet is funded on mainnet. This turns the track record from a demo into real proof.
-2. **One payment, one invoice, always.** A standard USDC transfer can't say which invoice it's for, so today two
+1. **One payment, one invoice, always.** A standard USDC transfer can't say which invoice it's for, so today two
    unpaid invoices for the same amount could be confused. Giving each invoice a unique amount (for example
    100.0012 USDC) ties every payment to exactly one invoice.
-3. **Paid notifications.** An email or in-app alert when a client pays, so freelancers don't have to keep checking.
+2. **Paid notifications.** An email or in-app alert when a client pays, so freelancers don't have to keep checking.
 
 ## Month two: making the track record trusted
 
-4. **Client confirmation.** After paying, the client can confirm "I received the work". Receipts backed by both
+3. **Client confirmation.** After paying, the client can confirm "I received the work". Receipts backed by both
    sides are much harder to fake than evidence from the freelancer alone, including payments a freelancer sends
    to themselves from a second wallet.
-5. **More stablecoins.** USDT and others through a per-invoice token field, using the same onchain checks.
-6. **Shareable track record.** A link and card made for bios, LinkedIn and proposals, so the record travels to
+4. **More stablecoins.** USDT and others through a per-invoice token field, using the same onchain checks.
+5. **Shareable track record.** A link and card made for bios, LinkedIn and proposals, so the record travels to
    where freelancers find their next client.
 
 ## Later: making it a product

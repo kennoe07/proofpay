@@ -41,9 +41,9 @@ Try it, quickest first:
 - No wallet needed: open a real paid invoice at https://proofpay-rho.vercel.app/i/b3aa8a7c-70ea-4c3a-b314-0add4b8dbde9 and click "Verify on EAS" to see its onchain receipt. Click the freelancer's name to see their public track record.
 - Full flow (about 5 minutes, free): sign in at /dashboard, create a Test mode invoice for 1 USDC, then pay it from a second wallet on Base Sepolia (free test USDC at faucet.circle.com). Watch it flip to Paid, add a file as evidence, and get the onchain receipt.
 
-Each invoice can be Test mode (Base Sepolia, free test USDC) or Live (Base mainnet, real USDC). Live payments are verified the same way; onchain receipts are enabled for Test mode now and coming for Live.
+Each invoice can be Test mode (Base Sepolia, free test USDC) or Live (Base mainnet, real USDC). Both get the same payment checks and onchain receipts. Real money, already working: https://proofpay-rho.vercel.app/i/4416f732-aa89-4129-a358-025ad2747f64 is a Live invoice paid in real USDC on Base mainnet, with its receipt on base.easscan.org.
 
-What's next: Live receipts on mainnet, one-invoice-per-payment matching, client confirmation of delivery, and more stablecoins. Roadmap: https://github.com/kennoe07/proofpay/blob/main/docs/roadmap.md
+What's next: one-invoice-per-payment matching, paid notifications, client confirmation of delivery, and more stablecoins. Roadmap: https://github.com/kennoe07/proofpay/blob/main/docs/roadmap.md
 
 Built during Vibeathon 02: ProofPay is a new product, started from an empty project after applications closed. Everything in the live app was built during build week: wallet sign-in, invoices (Test and Live), in-page USDC payment with onchain verification, delivery evidence, EAS receipts, public track records, Basenames and link previews. The first commit is from 3 Nov 2026 and the full history is in the repo.
 

@@ -64,6 +64,12 @@ Per-row notes (seen 7 Nov; the scanner reads the live landing page):
 - Backer fit: network effects depend on clients accepting a new invoice link.
 - Craft: "Live, but missing a custom domain."
 - Product evidence: "the only visible activity is a 1.00 USDC test payment."
+Re-run 7 Nov after the "Why ProofPay"/"Who it's for"/stats/motion update: still 71 (same row scores), but the
+notes moved on. Differentiation now accepts the wedge vs invoicing tools and review profiles, says "thin moat
+anyone with Base plus EAS could copy". Problem: demand unproven outside crypto-native freelancing. Timing:
+"nothing forces freelancers to switch today". Product evidence: "3 payments and 11 USDC shows you are still at
+demo scale". Craft: custom domain. Remaining gaps are real usage (Live payments, more freelancers) and the
+domain, not landing copy.
 
 ## Design
 
@@ -175,6 +181,16 @@ This Next.js version differs from older training data: read `node_modules/next/d
   (set it in Vercel after funding + `register-eas-schema.mjs base`). Before that gating existed, receipts
   on Live invoices fail with "the onchain receipt couldn't be written". Landing "Checked, not claimed" tile lists
   the five payment checks (keep in sync with `src/lib/verify-payment.ts`).
+
+## Live receipts (7 Nov 2026)
+
+Signer funded on Base mainnet (0.00045 ETH, ~$1). Receipt schema registered on Base mainnet, same UID as
+Sepolia (tx 0x732ff056…cebe); cost ~0.0000011 ETH. Remaining step: builder sets `NEXT_PUBLIC_LIVE_RECEIPTS=true`
+in Vercel and redeploys (NEXT_PUBLIC_ values are baked in at build time, so a redeploy is required).
+Done 7 Nov: variable set and redeployed. **First real-money receipt**: Live invoice
+`/i/4416f732-aa89-4129-a358-025ad2747f64` (1 USDC, tx 0xc6a0…a026, block 54460938), attestation
+0x216bf1af…8513 on base.easscan.org, read back from EAS: attester = signer, recipient = freelancer, Base USDC,
+amount, payer, tx and file hash all correct. README, roadmap and submission draft updated to say Live receipts work.
 
 ## Plan
 

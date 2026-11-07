@@ -14,6 +14,8 @@ Live app: **https://proofpay-rho.vercel.app** · Built for Vibeathon 02 ("Night 
 - **Full flow (about 5 minutes, free):** sign in at `/dashboard`, create a **Test mode** invoice, and pay it from a
   second wallet on Base Sepolia (free test USDC at [faucet.circle.com](https://faucet.circle.com)). Watch it flip to
   Paid, attach a file as evidence, and get the onchain receipt.
+- **Real money:** a [Live invoice](https://proofpay-rho.vercel.app/i/4416f732-aa89-4129-a358-025ad2747f64) paid in real USDC on Base mainnet, with its receipt on
+  [base.easscan.org](https://base.easscan.org/attestation/view/0x216bf1af57b9595b214725e2cee21f442eaee375c05f580c00167344967d8513).
 
 ## How it works
 
@@ -38,7 +40,8 @@ Live app: **https://proofpay-rho.vercel.app** · Built for Vibeathon 02 ("Night 
    bytes32 paymentTx, bytes32 deliverableHash, string deliverableUrl
    ```
 
-   Anyone can verify a receipt on [easscan](https://base-sepolia.easscan.org) without trusting ProofPay's database.
+   Anyone can verify a receipt on EAS Scan ([Base](https://base.easscan.org) for Live,
+   [Base Sepolia](https://base-sepolia.easscan.org) for Test mode) without trusting ProofPay's database.
 7. **Every paid job appears on the freelancer's public track record** at `/u/<handle>`, with Test and Live earnings
    kept separate. Client names are not shown there.
 
@@ -47,8 +50,6 @@ transaction hash by hand), profile pictures, Basename display, link previews, an
 
 ## Current limits
 
-- Onchain receipts are on for Test mode. Live payments are verified the same way; Live receipts switch on once the
-  signer wallet is funded on Base mainnet.
 - An ERC-20 transfer can't carry an invoice ID. If a freelancer has two unpaid invoices for the same amount, the first
   matching claim decides which one a transfer pays.
 - ProofPay proves that a wallet paid the freelancer, not who controls that wallet. Track records show payer addresses
@@ -56,8 +57,7 @@ transaction hash by hand), profile pictures, Basename display, link previews, an
 
 ## Next
 
-Live receipts on Base mainnet, one-invoice-per-payment matching, client confirmation of delivery, and more
-stablecoins. See [docs/roadmap.md](docs/roadmap.md).
+One-invoice-per-payment matching, paid notifications, client confirmation of delivery, and more stablecoins. See [docs/roadmap.md](docs/roadmap.md).
 
 ## Stack
 
