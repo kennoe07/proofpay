@@ -16,7 +16,7 @@ https://proofpay-rho.vercel.app
 
 ## Product screenshot (optional)
 
-Upload `docs/screenshot-landing.png` (landing page) or `docs/screenshot-receipt.png` (a paid invoice with its onchain receipt).
+Upload `docs/screenshot-landing.png` (landing page with live stats) or `docs/screenshot-receipt.png` (a Live invoice paid in real USDC on Base, with its onchain receipt). Both refreshed 7 Nov.
 
 ## Repo URL (optional)
 
