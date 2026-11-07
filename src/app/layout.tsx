@@ -34,6 +34,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,
           }}
         />
+        {/* Landing page motion: let [data-reveal] sections start hidden so they can fade in.
+            If the page script hasn't taken over within 3 seconds, show everything. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var r=document.documentElement;r.classList.add("motion");setTimeout(function(){if(!window.__reveal)r.classList.remove("motion")},3000)}catch(e){}})()`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

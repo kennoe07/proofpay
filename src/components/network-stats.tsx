@@ -1,4 +1,5 @@
 import { cacheLife } from "next/cache";
+import { CountUp } from "@/components/count-up";
 import { isTestnetChain } from "@/lib/chain";
 import { formatUsdc } from "@/lib/format";
 import { supabaseAdmin, type Invoice } from "@/lib/supabase-server";
@@ -34,7 +35,7 @@ export async function NetworkStats() {
   ];
 
   return (
-    <section aria-labelledby="network-stats" className="pt-4">
+    <section data-reveal aria-labelledby="network-stats" className="pt-4">
       <div className="rounded-3xl border border-line bg-surface p-6 sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="network-stats" className="text-sm font-medium">
@@ -49,7 +50,9 @@ export async function NetworkStats() {
           {stats.map((stat) => (
             <div key={stat.label} className="rounded-2xl border border-line bg-surface-2/60 p-4">
               <dt className="text-sm text-muted">{stat.label}</dt>
-              <dd className="mt-1 text-2xl font-semibold tracking-tight">{stat.value}</dd>
+              <dd className="mt-1 text-2xl font-semibold tracking-tight">
+                <CountUp value={stat.value} />
+              </dd>
               {stat.note && <dd className="mt-1 text-xs text-muted">{stat.note}</dd>}
             </div>
           ))}

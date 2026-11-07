@@ -85,3 +85,119 @@ body {
     animation: none;
   }
 }
+
+/* ── Landing page motion ─────────────────────────────────────────────
+   Subtle and landing-page only. Everything below is skipped for visitors who
+   ask their device to reduce motion. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero: the intro card's lines rise in one after another on load (CSS only). */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  .rise > * {
+    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .rise > :nth-child(2) {
+    animation-delay: 0.08s;
+  }
+  .rise > :nth-child(3) {
+    animation-delay: 0.16s;
+  }
+  .rise > :nth-child(4) {
+    animation-delay: 0.24s;
+  }
+
+  /* ── Receipt sequence (src/components/receipt-preview.tsx) ──
+     Each hash types in, gets a check, then the attestation bar slides in and stamps.
+     Every step waits var(--d) seconds after the receipt comes on screen. */
+  @keyframes type-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  .rcpt-type {
+    animation: type-in 0.4s var(--d, 0s) steps(11, end) both;
+  }
+  @keyframes tick-in {
+    from {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+    70% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  .rcpt-tick {
+    animation: tick-in 0.35s var(--d, 0s) cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  }
+  @keyframes bar-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  .rcpt-bar {
+    animation: bar-in 0.5s var(--d, 0s) cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  /* While the receipt is still waiting to scroll into view (phones), hold the sequence. */
+  html.motion [data-reveal]:not(.is-visible) :is(.rcpt-type, .rcpt-tick, .rcpt-bar, .stamp) {
+    animation-play-state: paused;
+  }
+
+  /* Example receipt: the "Attested" check stamps in at the end of the sequence. */
+  @keyframes stamp {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) rotate(-25deg);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.18) rotate(4deg);
+    }
+    100% {
+      transform: scale(1) rotate(0);
+    }
+  }
+  .stamp {
+    animation: stamp 0.55s var(--d, 0.9s) cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  }
+
+  /* Scroll reveal: hidden only once the page script says motion is on (html.motion),
+     so content never stays hidden if scripts fail. RevealOnScroll adds .is-visible. */
+  html.motion [data-reveal] {
+    transition:
+      opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(var(--reveal-i, 0) * 70ms);
+  }
+  html.motion [data-reveal]:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* Cards lift a little under the mouse (not on touch screens). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift {
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+  .lift:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    box-shadow: 0 12px 30px -12px color-mix(in oklab, var(--accent) 25%, transparent);
+  }
+}

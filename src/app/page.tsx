@@ -3,6 +3,7 @@ import { ReceiptPreview } from "@/components/receipt-preview";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { FeaturedTrackRecord } from "@/components/featured-track-record";
 import { NetworkStats } from "@/components/network-stats";
+import { RevealOnScroll } from "@/components/reveal-on-scroll";
 
 // The real track record shown on the landing page.
 const FEATURED_HANDLE = "0xknight";
@@ -127,6 +128,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export default function Home() {
   return (
     <div className="relative flex flex-1 flex-col overflow-hidden">
+      <RevealOnScroll />
       <div className="bg-grid pointer-events-none absolute inset-x-0 top-0 h-[720px]" aria-hidden />
       <div className="bg-glow pointer-events-none absolute inset-x-0 top-0 h-[720px]" aria-hidden />
 
@@ -159,10 +161,10 @@ export default function Home() {
       <main className="relative mx-auto w-full max-w-6xl px-4 sm:px-6">
         {/* Hero: receipt card beside the intro card. */}
         <section className="grid gap-4 pt-16 lg:grid-cols-[0.85fr_1.15fr] lg:pt-24">
-          <div className="order-2 lg:order-1">
+          <div data-reveal className="order-2 lg:order-1">
             <ReceiptPreview />
           </div>
-          <div className="order-1 flex flex-col justify-center rounded-3xl border border-line bg-surface p-8 sm:p-10 lg:order-2">
+          <div className="rise order-1 flex flex-col justify-center rounded-3xl border border-line bg-surface p-8 sm:p-10 lg:order-2">
             <p className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-surface-2 px-3 py-1 text-xs text-muted">
               <span className="size-1.5 rounded-full bg-accent" aria-hidden />
               Built for freelancers paid in USDC
@@ -185,7 +187,7 @@ export default function Home() {
         <NetworkStats />
 
         {/* Built with */}
-        <section className="py-14 text-center">
+        <section data-reveal className="py-14 text-center">
           <p className="text-xs text-muted">Built with</p>
           <ul className="mt-4 flex flex-wrap justify-center gap-2">
             {builtWith.map((item) => (
@@ -201,7 +203,7 @@ export default function Home() {
 
         {/* Bento grid */}
         <section id="how" className="scroll-mt-28 py-16">
-          <div className="text-center">
+          <div data-reveal className="text-center">
             <SectionLabel>How it works</SectionLabel>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
               From finished work to verified proof
@@ -209,7 +211,7 @@ export default function Home() {
           </div>
 
           <div className="mt-12 grid gap-4 md:grid-cols-6">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-300 via-emerald-400 to-emerald-600 p-8 text-emerald-950 md:col-span-3">
+            <div data-reveal style={{ "--reveal-i": 0 } as React.CSSProperties} className="lift relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-300 via-emerald-400 to-emerald-600 p-8 text-emerald-950 md:col-span-3">
               <p className="text-sm font-semibold tracking-tight opacity-80">ProofPay</p>
               <h3 className="mt-16 max-w-xs text-3xl font-semibold tracking-tight">
                 Get paid. Keep the proof.
@@ -221,7 +223,7 @@ export default function Home() {
               <div className="pointer-events-none absolute -top-12 -right-12 size-48 rounded-full border-[28px] border-white/20" aria-hidden />
             </div>
 
-            <div className="rounded-3xl border border-line bg-surface p-8 md:col-span-2">
+            <div data-reveal style={{ "--reveal-i": 1 } as React.CSSProperties} className="lift rounded-3xl border border-line bg-surface p-8 md:col-span-2">
               <h3 className="text-2xl font-semibold tracking-tight">Three steps</h3>
               <ol className="mt-6 space-y-4">
                 {steps.map((step, i) => (
@@ -235,7 +237,7 @@ export default function Home() {
               </ol>
             </div>
 
-            <div className="flex flex-col justify-between rounded-3xl border border-line bg-surface-2 p-8 md:col-span-1">
+            <div data-reveal style={{ "--reveal-i": 2 } as React.CSSProperties} className="lift flex flex-col justify-between rounded-3xl border border-line bg-surface-2 p-8 md:col-span-1">
               <span className="grid size-10 place-items-center rounded-xl bg-accent/10 text-accent">
                 <Icon d="M12 3v18M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </span>
@@ -245,7 +247,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col rounded-3xl border border-line bg-surface p-8 md:col-span-2">
+            <div data-reveal className="lift flex flex-col rounded-3xl border border-line bg-surface p-8 md:col-span-2">
               <span className="grid size-10 place-items-center rounded-xl bg-accent/10 text-accent">
                 <Icon d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6zM9 12l2 2 4-4" />
               </span>
@@ -267,7 +269,7 @@ export default function Home() {
               </ul>
             </div>
 
-            <div className="md:col-span-4">
+            <div data-reveal style={{ "--reveal-i": 1 } as React.CSSProperties} className="md:col-span-4">
               <FeaturedTrackRecord handle={FEATURED_HANDLE} />
             </div>
           </div>
@@ -275,7 +277,7 @@ export default function Home() {
 
         {/* Why ProofPay: what other tools prove, and what ProofPay adds. */}
         <section id="why" className="scroll-mt-28 py-16">
-          <div className="text-center">
+          <div data-reveal className="text-center">
             <SectionLabel>Why ProofPay</SectionLabel>
             <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Other tools prove one half. ProofPay proves both.
@@ -283,14 +285,18 @@ export default function Home() {
           </div>
 
           <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {comparison.map((item) => (
-              <div key={item.title} className="rounded-3xl border border-line bg-surface p-8">
+            {comparison.map((item, i) => (
+              <div
+                key={item.title}
+                data-reveal
+                style={{ "--reveal-i": i } as React.CSSProperties}
+                className="lift rounded-3xl border border-line bg-surface p-8">
                 <p className="text-sm text-muted">{item.title}</p>
                 <h3 className="mt-3 text-xl font-semibold tracking-tight">{item.verdict}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted">{item.body}</p>
               </div>
             ))}
-            <div className="rounded-3xl border border-accent/40 bg-accent/5 p-8">
+            <div data-reveal style={{ "--reveal-i": 2 } as React.CSSProperties} className="lift rounded-3xl border border-accent/40 bg-accent/5 p-8">
               <p className="text-sm text-accent">ProofPay</p>
               <h3 className="mt-3 text-xl font-semibold tracking-tight">Proves the pay and the work</h3>
               <p className="mt-3 text-sm leading-6 text-muted">
@@ -308,7 +314,7 @@ export default function Home() {
 
         {/* Who it's for */}
         <section id="who" className="scroll-mt-28 py-16">
-          <div className="text-center">
+          <div data-reveal className="text-center">
             <SectionLabel>Who it&apos;s for</SectionLabel>
             <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               For freelancers who already get paid in stablecoins
@@ -316,8 +322,12 @@ export default function Home() {
           </div>
 
           <ul className="mt-12 grid gap-4 sm:grid-cols-2">
-            {audience.map((item) => (
-              <li key={item.title} className="rounded-3xl border border-line bg-surface p-7">
+            {audience.map((item, i) => (
+              <li
+                key={item.title}
+                data-reveal
+                style={{ "--reveal-i": i % 2 } as React.CSSProperties}
+                className="lift rounded-3xl border border-line bg-surface p-7">
                 <span className="grid size-10 place-items-center rounded-xl bg-accent/10 text-accent">
                   <Icon d={item.icon} />
                 </span>
@@ -330,7 +340,7 @@ export default function Home() {
 
         {/* Features */}
         <section id="features" className="scroll-mt-28 grid gap-12 py-24 lg:grid-cols-2">
-          <div className="lg:sticky lg:top-32 lg:self-start">
+          <div data-reveal className="lg:sticky lg:top-32 lg:self-start">
             <SectionLabel>Features</SectionLabel>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Everything a paid job needs to count.
@@ -348,7 +358,8 @@ export default function Home() {
             {features.map((feature) => (
               <li
                 key={feature.title}
-                className="rounded-3xl border border-line bg-surface p-7 transition-colors hover:border-accent/40"
+                data-reveal
+                className="lift rounded-3xl border border-line bg-surface p-7 transition-colors hover:border-accent/40"
               >
                 <span className="grid size-10 place-items-center rounded-xl bg-surface-2 text-accent">
                   <Icon d={feature.icon} />

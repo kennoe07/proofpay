@@ -160,6 +160,15 @@ This Next.js version differs from older training data: read `node_modules/next/d
   (`#why`), "Who it's for" section (`#who`, includes "Why now" and "USDC first"), and `NetworkStats`
   (`src/components/network-stats.tsx`, `"use cache"` minutes: paid invoices, freelancers paid, receipts, USDC
   Live + Test) under the hero. Avoid unverifiable stats in landing copy.
+- 7 Nov (local, not yet pushed): landing page motion, all off under prefers-reduced-motion. CSS in
+  `globals.css` (`.rise`/`.rise-late` hero stagger, `.stamp` on the example receipt check, `.lift` hover,
+  `[data-reveal]` hidden only while `html.motion`). Head script in `layout.tsx` sets `motion` before paint and
+  removes it after 3 s unless `RevealOnScroll` set `window.__reveal`. `CountUp` animates `NetworkStats`
+  numbers, with a timeout fallback to the real value (headless browsers pause animation frames).
+  Hero receipt "builds itself" (builder chose this as the one signature moment; keep the rest subtle):
+  `.rcpt-type` hashes type in, `.rcpt-tick` checks, `.rcpt-bar` + `.stamp` attestation, timed by `--d` in
+  `receipt-preview.tsx`; paused until its `[data-reveal]` wrapper is visible (matters on phones).
+  Headless Edge screenshots only show the finished state, not motion.
 - Next: mobile/UX polish, submission. Open: testnet answer on Discord.
 - Decided 4 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by
   `receiptsEnabled()` (`src/lib/eas-schema.ts`): Test always, Live only with `NEXT_PUBLIC_LIVE_RECEIPTS=true`
