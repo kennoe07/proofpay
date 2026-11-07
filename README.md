@@ -56,7 +56,8 @@ transaction hash by hand), profile pictures, Basename display, link previews, an
 
 ## Next
 
-Live receipts on Base mainnet, then more stablecoins (such as USDT) via a per-invoice token field.
+Live receipts on Base mainnet, one-invoice-per-payment matching, client confirmation of delivery, and more
+stablecoins. See [docs/roadmap.md](docs/roadmap.md).
 
 ## Stack
 

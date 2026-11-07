@@ -2,6 +2,7 @@ import { Logo } from "@/components/logo";
 import { ReceiptPreview } from "@/components/receipt-preview";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { FeaturedTrackRecord } from "@/components/featured-track-record";
+import { NetworkStats } from "@/components/network-stats";
 
 // The real track record shown on the landing page.
 const FEATURED_HANDLE = "0xknight";
@@ -17,6 +18,43 @@ const checks = [
   "At least the invoice amount",
   "Made after the invoice was created",
   "Never reused for another invoice",
+];
+
+// How ProofPay compares with what freelancers use today.
+const comparison = [
+  {
+    title: "Invoicing and payment apps",
+    verdict: "Proves money moved",
+    body: "A transaction shows that money changed hands, but not which job it paid or what was delivered.",
+  },
+  {
+    title: "Profiles, reviews and portfolios",
+    verdict: "Proves what people say",
+    body: "Ratings, endorsements and portfolio claims are easy to write and hard to check. Most aren't tied to a payment at all.",
+  },
+];
+
+const audience = [
+  {
+    title: "Remote freelancers paid in USDC",
+    body: "Developers, designers, writers and contractors working for clients abroad, where a stablecoin is the simplest way to get paid.",
+    icon: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18",
+  },
+  {
+    title: "Winning the next client",
+    body: "A new client can't call your last one. A history of paid, delivered work that they can check does the talking.",
+    icon: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM4 21a8 8 0 0 1 16 0",
+  },
+  {
+    title: "Why now",
+    body: "Stablecoins are becoming a normal way to pay remote work, and on Base a receipt costs a fraction of a cent to record. Proof that used to be costly is now almost free.",
+    icon: "M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z",
+  },
+  {
+    title: "USDC first, more to come",
+    body: "ProofPay starts with USDC on Base. More stablecoins, such as USDT, come next, checked the same way.",
+    icon: "M12 3v18M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+  },
 ];
 
 const features = [
@@ -101,7 +139,10 @@ export default function Home() {
             <a href="#how" className="hidden transition-colors hover:text-foreground sm:inline">
               How it works
             </a>
-            <a href="#features" className="hidden transition-colors hover:text-foreground sm:inline">
+            <a href="#why" className="hidden transition-colors hover:text-foreground sm:inline">
+              Why ProofPay
+            </a>
+            <a href="#features" className="hidden transition-colors hover:text-foreground md:inline">
               Features
             </a>
             <ThemeToggle />
@@ -140,6 +181,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <NetworkStats />
 
         {/* Built with */}
         <section className="py-14 text-center">
@@ -228,6 +271,61 @@ export default function Home() {
               <FeaturedTrackRecord handle={FEATURED_HANDLE} />
             </div>
           </div>
+        </section>
+
+        {/* Why ProofPay: what other tools prove, and what ProofPay adds. */}
+        <section id="why" className="scroll-mt-28 py-16">
+          <div className="text-center">
+            <SectionLabel>Why ProofPay</SectionLabel>
+            <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+              Other tools prove one half. ProofPay proves both.
+            </h2>
+          </div>
+
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {comparison.map((item) => (
+              <div key={item.title} className="rounded-3xl border border-line bg-surface p-8">
+                <p className="text-sm text-muted">{item.title}</p>
+                <h3 className="mt-3 text-xl font-semibold tracking-tight">{item.verdict}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted">{item.body}</p>
+              </div>
+            ))}
+            <div className="rounded-3xl border border-accent/40 bg-accent/5 p-8">
+              <p className="text-sm text-accent">ProofPay</p>
+              <h3 className="mt-3 text-xl font-semibold tracking-tight">Proves the pay and the work</h3>
+              <p className="mt-3 text-sm leading-6 text-muted">
+                One receipt ties the payment to the delivered work. ProofPay checks it on Base, and anyone can
+                verify it without trusting us.
+              </p>
+              <p className="mt-4 text-sm leading-6 text-muted">
+                <span className="font-medium text-foreground">Nothing new for your client.</span> They open a
+                link, connect any wallet and send one USDC transfer. No account, and ProofPay never holds the
+                money.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Who it's for */}
+        <section id="who" className="scroll-mt-28 py-16">
+          <div className="text-center">
+            <SectionLabel>Who it&apos;s for</SectionLabel>
+            <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+              For freelancers who already get paid in stablecoins
+            </h2>
+          </div>
+
+          <ul className="mt-12 grid gap-4 sm:grid-cols-2">
+            {audience.map((item) => (
+              <li key={item.title} className="rounded-3xl border border-line bg-surface p-7">
+                <span className="grid size-10 place-items-center rounded-xl bg-accent/10 text-accent">
+                  <Icon d={item.icon} />
+                </span>
+                <h3 className="mt-5 text-lg font-medium">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted">{item.body}</p>
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Features */}

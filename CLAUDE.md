@@ -26,6 +26,10 @@ The receipts add up to a public track record the freelancer can show the next cl
 - Judges: Ross (Vibestarter), three featured judges incl. Saumya Saxena (Base), Claude and GPT, plus the
   $VIBES holder vote as one scorecard. Judging and vote run to Mon 16 Nov.
 - The sponsored Claude seat is for this project and may be revoked if nothing is submitted.
+- Vibestarter notice (X, 5 Nov 2026): some entrants submitted existing apps. Not against the rules, but the spirit is
+  net new products, so every submission should **state precisely what work was done during the Vibeathon**.
+  ProofPay is entirely new: first commit `823f52f` on 3 Nov 23:15 UTC, after applications closed. Keep the
+  "Built during Vibeathon 02" section in `docs/submission.md` up to date as work lands.
 - Rules: blog.vibestarter.xyz/vibeathon-02 · Discord: discord.gg/Kfpj89bu82 · Seat help: ross@vibestarter.xyz
 
 ## Product decisions
@@ -42,6 +46,24 @@ The receipts add up to a public track record the freelancer can show the next cl
 - USDC only for the Vibeathon. After it: support more stablecoins (e.g. USDT) via a per-invoice token field.
   Good material for the "path from MVP to product" part of the submission.
 - Keep a short build log of how AI tools were used (for the 10% criterion and the submission form).
+- **Plan past the Vibeathon.** Vibestarter's guidance (shared 4 Nov): the builds they most want to see raise are
+  the ones still shipping a month later; work out what ProofPay would ship in December if people started using it
+  next week. No roadmap needed for judges, but "if you can't picture month two, a raise isn't the next step yet."
+  Weigh feature ideas against what real users would need in month two, not only the judging criteria.
+
+## Fundable score (fundable.vibestarter.xyz, 4 Nov 2026, 22:20 UTC)
+
+71/100, "Promising". Problem & demand 12/20, Differentiation 9/15, Timing 7/10, Backer fit 11/15, Craft 8/10,
+Reliability 10/10, Product evidence 14/20. Comment: "the only thing missing is a receipt that is not test mode."
+Shown to judges for information, not scored. Main fix: Live receipts (fund signer with ETH on Base mainnet,
+register schema, set `NEXT_PUBLIC_LIVE_RECEIPTS=true`), then a real Live paid job. Builder is getting funds first.
+Per-row notes (seen 7 Nov; the scanner reads the live landing page):
+- Problem & demand: "most freelancers are not paid in USDC, so the addressable pain is narrow."
+- Differentiation: onchain invoicing and reputation protocols are crowded; "your page does not say why yours wins."
+- Timing: nothing on the page points to a shift in freelancer behaviour.
+- Backer fit: network effects depend on clients accepting a new invoice link.
+- Craft: "Live, but missing a custom domain."
+- Product evidence: "the only visible activity is a 1.00 USDC test payment."
 
 ## Design
 
@@ -134,6 +156,10 @@ This Next.js version differs from older training data: read `node_modules/next/d
   nosniff, referrer policy), `..` rejected in upload paths, reserved handles (`RESERVED_HANDLE` in
   `src/app/dashboard/actions.ts`). `npm audit` warnings are all inside wallet libraries; left until after the
   Vibeathon. README rewritten for judges. Personal notes moved to `CLAUDE.local.md`.
+- 7 Nov (local, not yet pushed): landing page answers the Fundable notes: "Why ProofPay" comparison section
+  (`#why`), "Who it's for" section (`#who`, includes "Why now" and "USDC first"), and `NetworkStats`
+  (`src/components/network-stats.tsx`, `"use cache"` minutes: paid invoices, freelancers paid, receipts, USDC
+  Live + Test) under the hero. Avoid unverifiable stats in landing copy.
 - Next: mobile/UX polish, submission. Open: testnet answer on Discord.
 - Decided 4 Nov: no custom domain for now; mainnet signer funding (Live receipts) later. Receipts are gated by
   `receiptsEnabled()` (`src/lib/eas-schema.ts`): Test always, Live only with `NEXT_PUBLIC_LIVE_RECEIPTS=true`
